@@ -1,0 +1,16 @@
+# --- GitHelper default ---
+config.json
+log.txt
+config_autogit.json
+config_autogit.json.tmp
+.cfg_*.tmp
+*.tmp
+log_autogit.txt
+autogit.exe
+*.pyc
+__pycache__/
+.venv/
+venv/
+node_modules/
+.DS_Store
+Thumbs.db
