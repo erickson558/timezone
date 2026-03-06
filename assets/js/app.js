@@ -15,13 +15,18 @@
     gtZone: 'America/Guatemala',
     usaZones: [],
     weatherLocations: [],
+    locationByTimezone: {},
+    geoCacheByTimezone: {},
     customZones: [],
     timezoneSuggestions: [],
+    cardOrder: [],
     cards: [],
     cardRefs: {}
   };
 
   var CUSTOM_ZONES_KEY = 'timezone-custom-zones-v1';
+  var CARD_ORDER_KEY = 'timezone-card-order-v1';
+  var draggingOrderKey = null;
 
   function nowServerDate() {
     return new Date(Date.now() + state.driftMs);
@@ -88,6 +93,30 @@
     }
   }
 
+  function loadCardOrder() {
+    var raw = localStorage.getItem(CARD_ORDER_KEY);
+    if (!raw) {
+      state.cardOrder = [];
+      return;
+    }
+
+    try {
+      var arr = JSON.parse(raw);
+      if (Object.prototype.toString.call(arr) === '[object Array]') {
+        state.cardOrder = arr;
+      } else {
+        state.cardOrder = [];
+      }
+    } catch (e) {
+      state.cardOrder = [];
+    }
+  }
+
+  function saveCardOrder(orderKeys) {
+    localStorage.setItem(CARD_ORDER_KEY, JSON.stringify(orderKeys));
+    state.cardOrder = orderKeys;
+  }
+
   function saveCustomZones() {
     localStorage.setItem(CUSTOM_ZONES_KEY, JSON.stringify(state.customZones));
   }
@@ -149,6 +178,28 @@
     return { cls: 'icon-cloud', icon: 'fa-cloud' };
   }
 
+  function weatherLabelByCode(code) {
+    if (code === 0 || code === 1) {
+      return 'Despejado';
+    }
+    if (code === 2 || code === 3) {
+      return 'Nublado';
+    }
+    if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) {
+      return 'Lluvia';
+    }
+    if (code >= 95) {
+      return 'Tormenta';
+    }
+    if (code >= 71 && code <= 86) {
+      return 'Nieve';
+    }
+    if (code === 45 || code === 48) {
+      return 'Neblina';
+    }
+    return 'Variable';
+  }
+
   function weatherToneClassByCode(code) {
     if (code === 0 || code === 1) {
       return 'weather-tone-clear';
@@ -172,10 +223,7 @@
   }
 
   function weatherRequestForCard(card) {
-    if (card.weatherKey) {
-      return 'backend/api/weather.php?location=' + encodeURIComponent(card.weatherKey);
-    }
-    return 'backend/api/weather.php?timezone=' + encodeURIComponent(card.iana);
+    return card;
   }
 
   function prettyZoneName(tz) {
@@ -195,6 +243,7 @@
       label: 'Guatemala',
       city: 'Guatemala City',
       iana: state.gtZone,
+        orderKey: '__GT__',
       isBase: true,
       weatherKey: null,
       isCustom: false
@@ -207,6 +256,7 @@
         label: zone.label,
         city: zone.city,
         iana: zone.iana,
+        orderKey: zone.iana,
         isBase: false,
         weatherKey: null,
         isCustom: false
@@ -221,6 +271,7 @@
         label: meta.city,
         city: meta.region,
         iana: customTz,
+        orderKey: customTz,
         isBase: false,
         weatherKey: null,
         isCustom: true
@@ -236,6 +287,28 @@
       }
     }
 
+    if (state.cardOrder.length) {
+      var byKey = {};
+      for (var k = 0; k < cards.length; k++) {
+        byKey[cards[k].orderKey] = cards[k];
+      }
+
+      var reordered = [];
+      for (var o = 0; o < state.cardOrder.length; o++) {
+        var key = state.cardOrder[o];
+        if (byKey[key]) {
+          reordered.push(byKey[key]);
+          delete byKey[key];
+        }
+      }
+      for (var r = 0; r < cards.length; r++) {
+        if (byKey[cards[r].orderKey]) {
+          reordered.push(cards[r]);
+        }
+      }
+      cards = reordered;
+    }
+
     state.cards = cards;
   }
 
@@ -243,7 +316,7 @@
     var html = '';
     for (var i = 0; i < state.cards.length; i++) {
       var card = state.cards[i];
-      html += '<article class="zone-card" id="card-' + card.id + '">';
+      html += '<article class="zone-card" id="card-' + card.id + '" draggable="true" data-order-key="' + card.orderKey + '">';
       html += '<div class="zone-card-header">';
       html += '<div>';
       html += '<div class="zone-name">' + card.label + '</div>';
@@ -251,6 +324,8 @@
       html += '</div>';
       html += '<div class="zone-header-actions">';
       html += '<span class="zone-badge">' + (card.isBase ? 'Base GT' : (card.isCustom ? 'Extra' : 'USA')) + '</span>';
+      html += '<button class="zone-order-btn" type="button" data-move-up="' + card.orderKey + '" aria-label="Subir card"><i class="fa-solid fa-arrow-up"></i></button>';
+      html += '<button class="zone-order-btn" type="button" data-move-down="' + card.orderKey + '" aria-label="Bajar card"><i class="fa-solid fa-arrow-down"></i></button>';
       if (card.isCustom) {
         html += '<button class="zone-remove-btn" type="button" data-remove-zone="' + card.iana + '" aria-label="Eliminar zona">x</button>';
       }
@@ -289,6 +364,8 @@
     }
 
     bindRemoveZoneButtons();
+    bindOrderButtons();
+    bindCardDragAndDrop();
   }
 
   function bindRemoveZoneButtons() {
@@ -297,6 +374,102 @@
       buttons[i].addEventListener('click', function () {
         var zone = this.getAttribute('data-remove-zone');
         removeCustomZone(zone);
+      });
+    }
+  }
+
+  function getCurrentOrderKeysFromState() {
+    var keys = [];
+    for (var i = 0; i < state.cards.length; i++) {
+      keys.push(state.cards[i].orderKey);
+    }
+    return keys;
+  }
+
+  function moveCardByDelta(orderKey, delta) {
+    var keys = getCurrentOrderKeysFromState();
+    var idx = keys.indexOf(orderKey);
+    if (idx < 0) {
+      return;
+    }
+    var target = idx + delta;
+    if (target < 0 || target >= keys.length) {
+      return;
+    }
+
+    var temp = keys[idx];
+    keys[idx] = keys[target];
+    keys[target] = temp;
+    saveCardOrder(keys);
+    redrawCards();
+  }
+
+  function bindOrderButtons() {
+    var ups = elCards.querySelectorAll('[data-move-up]');
+    var downs = elCards.querySelectorAll('[data-move-down]');
+
+    for (var i = 0; i < ups.length; i++) {
+      ups[i].addEventListener('click', function () {
+        moveCardByDelta(this.getAttribute('data-move-up'), -1);
+      });
+    }
+    for (var j = 0; j < downs.length; j++) {
+      downs[j].addEventListener('click', function () {
+        moveCardByDelta(this.getAttribute('data-move-down'), 1);
+      });
+    }
+  }
+
+  function bindCardDragAndDrop() {
+    var cards = elCards.querySelectorAll('.zone-card');
+
+    function applyDomOrderToStorage() {
+      var ordered = [];
+      var domCards = elCards.querySelectorAll('.zone-card');
+      for (var i = 0; i < domCards.length; i++) {
+        ordered.push(domCards[i].getAttribute('data-order-key'));
+      }
+      saveCardOrder(ordered);
+      redrawCards();
+    }
+
+    for (var i = 0; i < cards.length; i++) {
+      cards[i].addEventListener('dragstart', function () {
+        draggingOrderKey = this.getAttribute('data-order-key');
+        this.classList.add('is-dragging');
+      });
+
+      cards[i].addEventListener('dragend', function () {
+        draggingOrderKey = null;
+        this.classList.remove('is-dragging');
+      });
+
+      cards[i].addEventListener('dragover', function (evt) {
+        evt.preventDefault();
+      });
+
+      cards[i].addEventListener('drop', function (evt) {
+        evt.preventDefault();
+        var targetKey = this.getAttribute('data-order-key');
+        if (!draggingOrderKey || draggingOrderKey === targetKey) {
+          return;
+        }
+
+        var sourceEl = elCards.querySelector('[data-order-key="' + draggingOrderKey + '"]');
+        var targetEl = this;
+        if (!sourceEl || !targetEl) {
+          return;
+        }
+
+        var rect = targetEl.getBoundingClientRect();
+        var insertAfter = evt.clientY > (rect.top + rect.height / 2);
+        if (insertAfter) {
+          targetEl.after(sourceEl);
+        } else {
+          targetEl.before(sourceEl);
+        }
+
+        applyDomOrderToStorage();
       });
     }
   }
@@ -359,6 +532,71 @@
     ref.meta.innerHTML = '<span class="meta-pill">No disponible</span>';
   }
 
+  function normalizeWeatherValue(value, fallback) {
+    if (value === null || value === undefined || value === '') {
+      return fallback;
+    }
+    return value;
+  }
+
+  function getCoordsForCard(card) {
+    if (state.locationByTimezone[card.iana]) {
+      return Promise.resolve(state.locationByTimezone[card.iana]);
+    }
+    if (state.geoCacheByTimezone[card.iana]) {
+      return Promise.resolve(state.geoCacheByTimezone[card.iana]);
+    }
+
+    var meta = prettyZoneName(card.iana);
+    var query = encodeURIComponent(meta.city);
+    var geoUrl = 'https://geocoding-api.open-meteo.com/v1/search?name=' + query + '&count=1&language=en&format=json';
+    return requestJson(geoUrl).then(function (geo) {
+      if (!geo.results || !geo.results.length) {
+        throw new Error('No geocoding results');
+      }
+      var first = geo.results[0];
+      var coords = {
+        lat: first.latitude,
+        lon: first.longitude,
+        label: first.name
+      };
+      state.geoCacheByTimezone[card.iana] = coords;
+      return coords;
+    });
+  }
+
+  function fetchWeatherClientSide(card) {
+    return getCoordsForCard(card).then(function (coords) {
+      var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + encodeURIComponent(coords.lat) +
+        '&longitude=' + encodeURIComponent(coords.lon) +
+        '&current=temperature_2m,weather_code,wind_speed_10m,is_day&daily=temperature_2m_max,temperature_2m_min&timezone=' +
+        encodeURIComponent(card.iana);
+
+      return requestJson(url).then(function (data) {
+        if (!data.current) {
+          throw new Error('Missing current weather data');
+        }
+
+        var current = data.current;
+        var daily = data.daily || {};
+        var code = normalizeWeatherValue(current.weather_code, 3);
+
+        return {
+          weather: {
+            temperatureC: normalizeWeatherValue(current.temperature_2m, '--'),
+            windKmh: normalizeWeatherValue(current.wind_speed_10m, '--'),
+            weatherCode: code,
+            weatherLabel: weatherLabelByCode(code),
+            isDay: normalizeWeatherValue(current.is_day, 1) === 1,
+            updatedAt: normalizeWeatherValue(current.time, '--'),
+            highC: (daily.temperature_2m_max && daily.temperature_2m_max.length) ? daily.temperature_2m_max[0] : '--',
+            lowC: (daily.temperature_2m_min && daily.temperature_2m_min.length) ? daily.temperature_2m_min[0] : '--'
+          }
+        };
+      });
+    });
+  }
+
   function setSyncStatus(text) {
     elSync.textContent = text;
   }
@@ -389,6 +627,16 @@
       state.usaZones = data.usaZones;
       state.weatherLocations = data.weatherLocations;
       elVersion.textContent = data.version;
+
+       state.locationByTimezone = {};
+       for (var i = 0; i < state.weatherLocations.length; i++) {
+         var loc = state.weatherLocations[i];
+         state.locationByTimezone[loc.timezone] = {
+           lat: loc.lat,
+           lon: loc.lon,
+           label: loc.label
+         };
+       }
 
       buildCardsData();
       buildCardsUI();
@@ -496,10 +744,9 @@
           return;
         }
 
-        var p = requestJson(weatherRequestForCard(card))
+        var p = fetchWeatherClientSide(weatherRequestForCard(card))
           .then(function (data) {
             renderWeatherOnCard(card.id, data);
-            elVersion.textContent = data.version;
           })
           .catch(function () {
             renderWeatherError(card.id);
@@ -514,6 +761,7 @@
   function boot() {
     initTheme();
     loadCustomZones();
+    loadCardOrder();
 
     elAddZoneBtn.addEventListener('click', function () {
       addCustomZone(elZoneInput.value);

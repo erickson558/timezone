@@ -245,6 +245,15 @@ html[data-theme='dark'] .zone-card.weather-tone-fog {
   gap: 6px;
 }
 
+.zone-order-btn {
+  border: 1px solid rgba(46, 113, 241, 0.45);
+  background: rgba(46, 113, 241, 0.13);
+  color: var(--blue);
+  border-radius: 8px;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
 .zone-remove-btn {
   border: 1px solid rgba(231, 74, 59, 0.45);
   background: rgba(231, 74, 59, 0.14);
@@ -252,6 +261,11 @@ html[data-theme='dark'] .zone-card.weather-tone-fog {
   border-radius: 8px;
   padding: 2px 8px;
   cursor: pointer;
+}
+
+.zone-card.is-dragging {
+  opacity: 0.6;
+  transform: scale(0.98);
 }
 
 .zone-badge {
