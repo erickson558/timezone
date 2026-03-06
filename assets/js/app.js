@@ -52,6 +52,20 @@
     });
   }
 
+  function formatZoneAbbr(date, zone) {
+    var parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: zone,
+      timeZoneName: 'short'
+    }).formatToParts(date);
+
+    for (var i = 0; i < parts.length; i++) {
+      if (parts[i].type === 'timeZoneName') {
+        return parts[i].value;
+      }
+    }
+    return 'UTC';
+  }
+
   function normalizeTheme(theme) {
     return theme === 'dark' ? 'dark' : 'light';
   }
@@ -324,6 +338,7 @@
       html += '</div>';
       html += '<div class="zone-header-actions">';
       html += '<span class="zone-badge">' + (card.isBase ? 'Base GT' : (card.isCustom ? 'Extra' : 'USA')) + '</span>';
+      html += '<span class="zone-badge zone-abbr" id="abbr-' + card.id + '">--</span>';
       html += '<button class="zone-order-btn" type="button" data-move-up="' + card.orderKey + '" aria-label="Subir card"><i class="fa-solid fa-arrow-up"></i></button>';
       html += '<button class="zone-order-btn" type="button" data-move-down="' + card.orderKey + '" aria-label="Bajar card"><i class="fa-solid fa-arrow-down"></i></button>';
       if (card.isCustom) {
@@ -334,6 +349,7 @@
 
       html += '<div class="zone-time" id="time-' + card.id + '">--:--:--</div>';
       html += '<div class="zone-date" id="date-' + card.id + '">Cargando fecha...</div>';
+      html += '<div class="zone-iana" id="iana-' + card.id + '">' + card.iana + '</div>';
       html += '<div class="zone-offset" id="offset-' + card.id + '">Calculando...</div>';
 
       html += '<div class="weather-row">';
@@ -355,6 +371,8 @@
       state.cardRefs[id] = {
         time: document.getElementById('time-' + id),
         date: document.getElementById('date-' + id),
+        abbr: document.getElementById('abbr-' + id),
+        iana: document.getElementById('iana-' + id),
         offset: document.getElementById('offset-' + id),
         icon: document.getElementById('icon-' + id),
         temp: document.getElementById('temp-' + id),
@@ -482,9 +500,12 @@
       var card = state.cards[i];
       var ref = state.cardRefs[card.id];
       var currentOffset = zoneOffsetMinutes(now, card.iana);
+      var abbr = formatZoneAbbr(now, card.iana);
 
       ref.time.textContent = formatTime(now, card.iana);
-      ref.date.textContent = formatDate(now, card.iana) + ' (' + card.iana + ')';
+      ref.date.textContent = formatDate(now, card.iana);
+      ref.iana.textContent = card.iana;
+      ref.abbr.textContent = abbr;
       ref.offset.textContent = card.isBase ? 'Misma hora GT (referencia)' : prettyDiff(gtOffset, currentOffset);
     }
   }

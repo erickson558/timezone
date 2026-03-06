@@ -7,12 +7,14 @@ Version actual: revisar archivo `VERSION`.
 ## Caracteristicas
 
 - Cards por zona (GT + USA) con hora, fecha, diferencia vs GT y clima.
+- Abreviatura de zona en cada card (ej. EST, PST, CST, MST, AKST/HST segun temporada).
 - Agregar y eliminar zonas horarias personalizadas (IANA) estilo iPhone, guardadas en `localStorage`.
 - Reordenar cards con drag-and-drop y botones subir/bajar (persistente).
 - Comparacion horaria en vivo de GT vs zonas principales de USA sin parpadeo visual.
 - Ajuste automatico por DST usando `Intl` del navegador.
 - Clima en vivo por cada card desde Open-Meteo con iconografia animada.
 - Color dinamico por card segun estado del clima (soleado, lluvia, nublado, etc.).
+- Mejor contraste de textos y pildoras del clima para alta legibilidad.
 - Modo claro y modo oscuro persistente en navegador.
 - Arquitectura separada:
 - Frontend en `index.php` + `assets/css` + `assets/js`.

@@ -277,6 +277,12 @@ html[data-theme='dark'] .zone-card.weather-tone-fog {
   font-size: 0.76rem;
 }
 
+.zone-abbr {
+  background: rgba(28, 200, 138, 0.16);
+  border-color: rgba(28, 200, 138, 0.45);
+  color: #22b573;
+}
+
 .zone-name {
   font-weight: 700;
 }
@@ -309,6 +315,12 @@ html[data-theme='dark'] .zone-card.weather-tone-fog {
   color: var(--text-soft);
 }
 
+.zone-iana {
+  font-size: 0.8rem;
+  color: var(--text-soft);
+  opacity: 0.9;
+}
+
 .weather-row {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -326,11 +338,13 @@ html[data-theme='dark'] .zone-card.weather-tone-fog {
   font-family: 'Outfit', 'Segoe UI', sans-serif;
   font-size: 1.25rem;
   font-weight: 700;
+  color: var(--text-main);
 }
 
 .card-weather-label {
-  color: var(--text-soft);
-  font-size: 0.85rem;
+  color: var(--text-main);
+  font-size: 0.88rem;
+  font-weight: 600;
 }
 
 .weather-wrap {
@@ -452,12 +466,27 @@ html[data-theme='dark'] .zone-card.weather-tone-fog {
 }
 
 .meta-pill {
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.56);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.32);
   border-radius: 999px;
   padding: 5px 10px;
   font-size: 0.82rem;
-  color: var(--text-soft);
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+html[data-theme='dark'] .meta-pill {
+  border: 1px solid rgba(232, 237, 242, 0.32);
+  background: rgba(12, 19, 30, 0.42);
+  color: #e8edf2;
+}
+
+html[data-theme='dark'] .card-weather-label {
+  color: #edf3ff;
+}
+
+html[data-theme='dark'] .card-temp {
+  color: #ffffff;
 }
 
 .api-note {
