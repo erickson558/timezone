@@ -507,6 +507,13 @@
   function bindCardDragAndDrop() {
     var cards = elCards.querySelectorAll('.zone-card');
 
+    function clearDropTargets() {
+      var activeTargets = elCards.querySelectorAll('.zone-card.is-drop-target');
+      for (var t = 0; t < activeTargets.length; t++) {
+        activeTargets[t].classList.remove('is-drop-target');
+      }
+    }
+
     function applyDomOrderToStorage() {
       var ordered = [];
       var domCards = elCards.querySelectorAll('.zone-card');
@@ -518,22 +525,36 @@
     }
 
     for (var i = 0; i < cards.length; i++) {
-      cards[i].addEventListener('dragstart', function () {
+      cards[i].addEventListener('dragstart', function (evt) {
         draggingOrderKey = this.getAttribute('data-order-key');
         this.classList.add('is-dragging');
+        if (evt.dataTransfer) {
+          evt.dataTransfer.effectAllowed = 'move';
+          evt.dataTransfer.setData('text/plain', draggingOrderKey);
+        }
       });
 
       cards[i].addEventListener('dragend', function () {
         draggingOrderKey = null;
         this.classList.remove('is-dragging');
+        clearDropTargets();
       });
 
       cards[i].addEventListener('dragover', function (evt) {
         evt.preventDefault();
+        this.classList.add('is-drop-target');
+        if (evt.dataTransfer) {
+          evt.dataTransfer.dropEffect = 'move';
+        }
+      });
+
+      cards[i].addEventListener('dragleave', function () {
+        this.classList.remove('is-drop-target');
       });
 
       cards[i].addEventListener('drop', function (evt) {
         evt.preventDefault();
+        clearDropTargets();
         var targetKey = this.getAttribute('data-order-key');
         if (!draggingOrderKey || draggingOrderKey === targetKey) {
           return;

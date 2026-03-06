@@ -23,6 +23,10 @@ Version actual: revisar archivo `VERSION`.
 - Selector de 5 temas modernos con persistencia al cerrar y abrir el sitio:
 - `Aurora Flow`, `Neon Grid`, `Sunset Drive`, `Ice Mineral`, `Graphite Pop`.
 - Las cards tambien cambian su paleta por tema (fondo, bordes, acentos y contraste), no solo el fondo general.
+- Correccion de visibilidad en el selector de temas para que el texto de opciones siempre se vea.
+- Cards con grid autoajustable y mas ancho util para evitar que el contenido se salga.
+- Efectos visuales reforzados: brillo/shine al hover, elevacion y feedback de drop target.
+- Reordenamiento mejorado por drag-and-drop (compatibilidad cross-browser) y botones de respaldo.
 - Arquitectura separada:
 - Frontend en `index.php` + `assets/css` + `assets/js`.
 - Backend en `backend/api` y configuracion en `config/app.php`.
