@@ -116,6 +116,43 @@ html[data-theme='dark'] .theme-btn {
   font-weight: 700;
 }
 
+.controls-bar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.zone-controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.zone-input {
+  min-width: 220px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--text-main);
+}
+
+html[data-theme='dark'] .zone-input {
+  background: rgba(8, 14, 22, 0.75);
+}
+
+.zone-btn {
+  border: 1px solid rgba(46, 113, 241, 0.45);
+  background: rgba(46, 113, 241, 0.14);
+  color: var(--blue);
+  border-radius: 10px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
 .sync-row {
   margin: 8px 0 16px;
   color: var(--text-soft);
@@ -147,11 +184,74 @@ html[data-theme='dark'] .theme-btn {
   animation: slideUp 360ms ease both;
 }
 
+.zone-card.weather-tone-clear {
+  background: linear-gradient(160deg, rgba(255, 211, 124, 0.48), rgba(255, 255, 255, 0.3));
+}
+
+.zone-card.weather-tone-cloud {
+  background: linear-gradient(160deg, rgba(169, 188, 217, 0.4), rgba(255, 255, 255, 0.25));
+}
+
+.zone-card.weather-tone-rain {
+  background: linear-gradient(160deg, rgba(98, 152, 255, 0.42), rgba(217, 236, 255, 0.25));
+}
+
+.zone-card.weather-tone-storm {
+  background: linear-gradient(160deg, rgba(67, 80, 106, 0.72), rgba(255, 191, 98, 0.22));
+}
+
+.zone-card.weather-tone-snow {
+  background: linear-gradient(160deg, rgba(196, 225, 255, 0.45), rgba(255, 255, 255, 0.36));
+}
+
+.zone-card.weather-tone-fog {
+  background: linear-gradient(160deg, rgba(200, 206, 218, 0.44), rgba(239, 243, 250, 0.28));
+}
+
+html[data-theme='dark'] .zone-card.weather-tone-clear {
+  background: linear-gradient(160deg, rgba(105, 82, 29, 0.62), rgba(22, 29, 40, 0.6));
+}
+
+html[data-theme='dark'] .zone-card.weather-tone-cloud {
+  background: linear-gradient(160deg, rgba(52, 67, 92, 0.72), rgba(23, 31, 45, 0.6));
+}
+
+html[data-theme='dark'] .zone-card.weather-tone-rain {
+  background: linear-gradient(160deg, rgba(31, 63, 120, 0.74), rgba(18, 28, 42, 0.62));
+}
+
+html[data-theme='dark'] .zone-card.weather-tone-storm {
+  background: linear-gradient(160deg, rgba(26, 33, 52, 0.82), rgba(99, 73, 18, 0.52));
+}
+
+html[data-theme='dark'] .zone-card.weather-tone-snow {
+  background: linear-gradient(160deg, rgba(48, 66, 87, 0.74), rgba(26, 34, 46, 0.62));
+}
+
+html[data-theme='dark'] .zone-card.weather-tone-fog {
+  background: linear-gradient(160deg, rgba(57, 67, 81, 0.76), rgba(26, 34, 46, 0.64));
+}
+
 .zone-card-header {
   display: flex;
   justify-content: space-between;
   gap: 10px;
   align-items: flex-start;
+}
+
+.zone-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.zone-remove-btn {
+  border: 1px solid rgba(231, 74, 59, 0.45);
+  background: rgba(231, 74, 59, 0.14);
+  color: #d43a2a;
+  border-radius: 8px;
+  padding: 2px 8px;
+  cursor: pointer;
 }
 
 .zone-badge {
@@ -257,7 +357,7 @@ html[data-theme='dark'] .theme-btn {
   position: relative;
   overflow: hidden;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.7);
 }
 
 .weather-icon::after {
@@ -275,9 +375,17 @@ html[data-theme='dark'] .theme-btn {
   animation: spinSlow 8s linear infinite;
 }
 
+.icon-sun {
+  background: radial-gradient(circle at 30% 25%, rgba(255, 238, 166, 0.95), rgba(255, 186, 73, 0.65));
+}
+
 .icon-cloud i {
   color: var(--cloud);
   animation: floatCloud 2.6s ease-in-out infinite;
+}
+
+.icon-cloud {
+  background: radial-gradient(circle at 32% 24%, rgba(236, 246, 255, 0.95), rgba(180, 197, 220, 0.68));
 }
 
 .icon-rain i {
@@ -285,9 +393,17 @@ html[data-theme='dark'] .theme-btn {
   animation: rainPulse 1.3s linear infinite;
 }
 
+.icon-rain {
+  background: radial-gradient(circle at 30% 22%, rgba(214, 233, 255, 0.95), rgba(94, 151, 255, 0.68));
+}
+
 .icon-storm i {
   color: #f2b90f;
   animation: flashStorm 1.4s linear infinite;
+}
+
+.icon-storm {
+  background: radial-gradient(circle at 30% 22%, rgba(190, 205, 235, 0.95), rgba(95, 106, 126, 0.7));
 }
 
 .icon-snow i {
@@ -295,9 +411,17 @@ html[data-theme='dark'] .theme-btn {
   animation: driftSnow 2s ease-in-out infinite;
 }
 
+.icon-snow {
+  background: radial-gradient(circle at 30% 22%, rgba(246, 250, 255, 0.96), rgba(194, 220, 255, 0.72));
+}
+
 .icon-fog i {
   color: #7e8795;
   animation: fogWave 2.8s ease-in-out infinite;
+}
+
+.icon-fog {
+  background: radial-gradient(circle at 30% 22%, rgba(248, 249, 253, 0.96), rgba(210, 215, 224, 0.7));
 }
 
 .temp {
@@ -320,6 +444,12 @@ html[data-theme='dark'] .theme-btn {
   padding: 5px 10px;
   font-size: 0.82rem;
   color: var(--text-soft);
+}
+
+.api-note {
+  margin: 12px 2px 0;
+  color: var(--text-soft);
+  font-size: 0.84rem;
 }
 
 .card-fade {

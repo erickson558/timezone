@@ -7,9 +7,11 @@ Version actual: revisar archivo `VERSION`.
 ## Caracteristicas
 
 - Cards por zona (GT + USA) con hora, fecha, diferencia vs GT y clima.
+- Agregar y eliminar zonas horarias personalizadas (IANA) estilo iPhone, guardadas en `localStorage`.
 - Comparacion horaria en vivo de GT vs zonas principales de USA sin parpadeo visual.
 - Ajuste automatico por DST usando `Intl` del navegador.
 - Clima en vivo por cada card desde Open-Meteo con iconografia animada.
+- Color dinamico por card segun estado del clima (soleado, lluvia, nublado, etc.).
 - Modo claro y modo oscuro persistente en navegador.
 - Arquitectura separada:
 - Frontend en `index.php` + `assets/css` + `assets/js`.
@@ -43,11 +45,15 @@ Version actual: revisar archivo `VERSION`.
 ## Dependencias
 
 - PHP 5.4+ (recomendado PHP 8.x).
-- Conexion saliente HTTPS para consultar Open-Meteo.
+- Conexion saliente HTTPS para consultar APIs gratuitas.
 - Navegador moderno con soporte `Intl`.
 - CDN externos:
 - Google Fonts (DM Sans, Outfit).
 - Font Awesome.
+- APIs gratuitas consumidas:
+- Open-Meteo Forecast (clima, grados y condiciones).
+- Open-Meteo Geocoding (lat/lon para zonas agregadas).
+- WorldTimeAPI (lista de zonas IANA para sugerencias, con fallback local).
 
 ## Como ejecutar
 
@@ -59,7 +65,8 @@ Version actual: revisar archivo `VERSION`.
 
 - `backend/api/time.php`: hora UTC del servidor y referencia GT.
 - `backend/api/timezones.php`: zona base GT, zonas USA y ubicaciones de clima.
-- `backend/api/weather.php?location=gt-guatemala-city`: clima por ubicacion.
+- `backend/api/weather.php?location=gt-guatemala-city`: clima por ubicacion conocida.
+- `backend/api/weather.php?timezone=Europe/Madrid`: clima por zona agregada dinamicamente.
 - `backend/api/version.php`: version de la app.
 
 ## Versionamiento

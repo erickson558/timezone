@@ -6,15 +6,22 @@
   var elCards = document.getElementById('zone-cards');
   var elThemeToggle = document.getElementById('theme-toggle');
   var elThemeLabel = document.getElementById('theme-label');
+  var elZoneInput = document.getElementById('zone-input');
+  var elAddZoneBtn = document.getElementById('add-zone-btn');
+  var elSuggestions = document.getElementById('timezone-suggestions');
 
   var state = {
     driftMs: 0,
     gtZone: 'America/Guatemala',
     usaZones: [],
     weatherLocations: [],
+    customZones: [],
+    timezoneSuggestions: [],
     cards: [],
     cardRefs: {}
   };
+
+  var CUSTOM_ZONES_KEY = 'timezone-custom-zones-v1';
 
   function nowServerDate() {
     return new Date(Date.now() + state.driftMs);
@@ -42,6 +49,47 @@
 
   function normalizeTheme(theme) {
     return theme === 'dark' ? 'dark' : 'light';
+  }
+
+  function isValidTimezone(tz) {
+    try {
+      Intl.DateTimeFormat('en-US', { timeZone: tz }).format(new Date());
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function normalizeTimezoneInput(value) {
+    return String(value || '').trim();
+  }
+
+  function loadCustomZones() {
+    var raw = localStorage.getItem(CUSTOM_ZONES_KEY);
+    if (!raw) {
+      state.customZones = [];
+      return;
+    }
+
+    try {
+      var list = JSON.parse(raw);
+      var out = [];
+      if (Object.prototype.toString.call(list) === '[object Array]') {
+        for (var i = 0; i < list.length; i++) {
+          var tz = normalizeTimezoneInput(list[i]);
+          if (tz !== '' && isValidTimezone(tz) && out.indexOf(tz) < 0) {
+            out.push(tz);
+          }
+        }
+      }
+      state.customZones = out;
+    } catch (e) {
+      state.customZones = [];
+    }
+  }
+
+  function saveCustomZones() {
+    localStorage.setItem(CUSTOM_ZONES_KEY, JSON.stringify(state.customZones));
   }
 
   function applyTheme(theme) {
@@ -101,6 +149,45 @@
     return { cls: 'icon-cloud', icon: 'fa-cloud' };
   }
 
+  function weatherToneClassByCode(code) {
+    if (code === 0 || code === 1) {
+      return 'weather-tone-clear';
+    }
+    if (code === 2 || code === 3) {
+      return 'weather-tone-cloud';
+    }
+    if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) {
+      return 'weather-tone-rain';
+    }
+    if (code >= 95) {
+      return 'weather-tone-storm';
+    }
+    if (code >= 71 && code <= 86) {
+      return 'weather-tone-snow';
+    }
+    if (code === 45 || code === 48) {
+      return 'weather-tone-fog';
+    }
+    return 'weather-tone-cloud';
+  }
+
+  function weatherRequestForCard(card) {
+    if (card.weatherKey) {
+      return 'backend/api/weather.php?location=' + encodeURIComponent(card.weatherKey);
+    }
+    return 'backend/api/weather.php?timezone=' + encodeURIComponent(card.iana);
+  }
+
+  function prettyZoneName(tz) {
+    var parts = tz.split('/');
+    var city = parts[parts.length - 1].replace(/_/g, ' ');
+    var region = parts[0] || 'Custom';
+    return {
+      city: city,
+      region: region
+    };
+  }
+
   function buildCardsData() {
     var cards = [];
     cards.push({
@@ -109,7 +196,8 @@
       city: 'Guatemala City',
       iana: state.gtZone,
       isBase: true,
-      weatherKey: null
+      weatherKey: null,
+      isCustom: false
     });
 
     for (var i = 0; i < state.usaZones.length; i++) {
@@ -120,7 +208,22 @@
         city: zone.city,
         iana: zone.iana,
         isBase: false,
-        weatherKey: null
+        weatherKey: null,
+        isCustom: false
+      });
+    }
+
+    for (var z = 0; z < state.customZones.length; z++) {
+      var customTz = state.customZones[z];
+      var meta = prettyZoneName(customTz);
+      cards.push({
+        id: 'custom-' + z,
+        label: meta.city,
+        city: meta.region,
+        iana: customTz,
+        isBase: false,
+        weatherKey: null,
+        isCustom: true
       });
     }
 
@@ -146,7 +249,12 @@
       html += '<div class="zone-name">' + card.label + '</div>';
       html += '<div class="zone-city">' + card.city + '</div>';
       html += '</div>';
-      html += '<span class="zone-badge">' + (card.isBase ? 'Base GT' : 'USA') + '</span>';
+      html += '<div class="zone-header-actions">';
+      html += '<span class="zone-badge">' + (card.isBase ? 'Base GT' : (card.isCustom ? 'Extra' : 'USA')) + '</span>';
+      if (card.isCustom) {
+        html += '<button class="zone-remove-btn" type="button" data-remove-zone="' + card.iana + '" aria-label="Eliminar zona">x</button>';
+      }
+      html += '</div>';
       html += '</div>';
 
       html += '<div class="zone-time" id="time-' + card.id + '">--:--:--</div>';
@@ -179,6 +287,18 @@
         meta: document.getElementById('meta-' + id)
       };
     }
+
+    bindRemoveZoneButtons();
+  }
+
+  function bindRemoveZoneButtons() {
+    var buttons = elCards.querySelectorAll('[data-remove-zone]');
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].addEventListener('click', function () {
+        var zone = this.getAttribute('data-remove-zone');
+        removeCustomZone(zone);
+      });
+    }
   }
 
   function updateTimesOnly() {
@@ -204,22 +324,35 @@
 
     var weather = payload.weather;
     var icon = weatherIconByCode(weather.weatherCode);
+    var toneClass = weatherToneClassByCode(weather.weatherCode);
+    var cardEl = document.getElementById('card-' + cardId);
 
     ref.icon.className = 'weather-icon card-fade ' + icon.cls;
     ref.icon.innerHTML = '<i class="fa-solid ' + icon.icon + '"></i>';
+
+    if (cardEl) {
+      cardEl.classList.remove('weather-tone-clear', 'weather-tone-cloud', 'weather-tone-rain', 'weather-tone-storm', 'weather-tone-snow', 'weather-tone-fog');
+      cardEl.classList.add(toneClass);
+    }
 
     ref.temp.textContent = weather.temperatureC + ' C';
     ref.summary.textContent = weather.weatherLabel;
     ref.meta.innerHTML =
       '<span class="meta-pill">Max ' + weather.highC + ' C</span>' +
       '<span class="meta-pill">Min ' + weather.lowC + ' C</span>' +
-      '<span class="meta-pill">Viento ' + weather.windKmh + ' km/h</span>';
+      '<span class="meta-pill">Viento ' + weather.windKmh + ' km/h</span>' +
+      '<span class="meta-pill">Actualizado ' + (weather.updatedAt || '--') + '</span>';
   }
 
   function renderWeatherError(cardId) {
     var ref = state.cardRefs[cardId];
     if (!ref) {
       return;
+    }
+    var cardEl = document.getElementById('card-' + cardId);
+    if (cardEl) {
+      cardEl.classList.remove('weather-tone-clear', 'weather-tone-cloud', 'weather-tone-rain', 'weather-tone-storm', 'weather-tone-snow', 'weather-tone-fog');
+      cardEl.classList.add('weather-tone-cloud');
     }
     ref.temp.textContent = '-- C';
     ref.summary.textContent = 'Sin datos de clima';
@@ -263,6 +396,96 @@
     });
   }
 
+  function redrawCards() {
+    state.cardRefs = {};
+    buildCardsData();
+    buildCardsUI();
+    updateTimesOnly();
+    refreshWeatherAllCards();
+  }
+
+  function addCustomZone(zone) {
+    var tz = normalizeTimezoneInput(zone);
+    if (tz === '') {
+      alert('Escribe una zona IANA valida, por ejemplo Europe/Madrid');
+      return;
+    }
+    if (!isValidTimezone(tz)) {
+      alert('Zona invalida. Usa formato IANA, por ejemplo America/Phoenix');
+      return;
+    }
+
+    var existsInFixed = false;
+    if (tz === state.gtZone) {
+      existsInFixed = true;
+    }
+    for (var i = 0; i < state.usaZones.length; i++) {
+      if (state.usaZones[i].iana === tz) {
+        existsInFixed = true;
+        break;
+      }
+    }
+    if (existsInFixed || state.customZones.indexOf(tz) >= 0) {
+      alert('Esa zona ya existe en tus cards.');
+      return;
+    }
+
+    state.customZones.push(tz);
+    saveCustomZones();
+    elZoneInput.value = '';
+    redrawCards();
+  }
+
+  function removeCustomZone(zone) {
+    var next = [];
+    for (var i = 0; i < state.customZones.length; i++) {
+      if (state.customZones[i] !== zone) {
+        next.push(state.customZones[i]);
+      }
+    }
+    state.customZones = next;
+    saveCustomZones();
+    redrawCards();
+  }
+
+  function fallbackTimezoneSuggestions() {
+    if (typeof Intl.supportedValuesOf === 'function') {
+      try {
+        return Intl.supportedValuesOf('timeZone');
+      } catch (e) {
+        return [];
+      }
+    }
+    return [];
+  }
+
+  function renderTimezoneSuggestions(items) {
+    var limited = [];
+    for (var i = 0; i < items.length && i < 400; i++) {
+      limited.push(items[i]);
+    }
+
+    var html = '';
+    for (var j = 0; j < limited.length; j++) {
+      html += '<option value="' + limited[j] + '"></option>';
+    }
+    elSuggestions.innerHTML = html;
+  }
+
+  function loadTimezoneSuggestions() {
+    return requestJson('https://worldtimeapi.org/api/timezone').then(function (zones) {
+      if (Object.prototype.toString.call(zones) !== '[object Array]') {
+        zones = fallbackTimezoneSuggestions();
+      }
+      state.timezoneSuggestions = zones;
+      renderTimezoneSuggestions(zones);
+    }).catch(function () {
+      var fallback = fallbackTimezoneSuggestions();
+      state.timezoneSuggestions = fallback;
+      renderTimezoneSuggestions(fallback);
+    });
+  }
+
   function refreshWeatherAllCards() {
     var calls = [];
 
@@ -273,7 +496,7 @@
           return;
         }
 
-        var p = requestJson('backend/api/weather.php?location=' + encodeURIComponent(card.weatherKey))
+        var p = requestJson(weatherRequestForCard(card))
           .then(function (data) {
             renderWeatherOnCard(card.id, data);
             elVersion.textContent = data.version;
@@ -290,8 +513,22 @@
 
   function boot() {
     initTheme();
+    loadCustomZones();
+
+    elAddZoneBtn.addEventListener('click', function () {
+      addCustomZone(elZoneInput.value);
+    });
+
+    elZoneInput.addEventListener('keydown', function (evt) {
+      if (evt.key === 'Enter') {
+        evt.preventDefault();
+        addCustomZone(elZoneInput.value);
+      }
+    });
 
     loadConfig().then(function () {
+      return loadTimezoneSuggestions();
+    }).then(function () {
       return syncTime();
     }).then(function () {
       updateTimesOnly();
