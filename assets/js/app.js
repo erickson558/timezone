@@ -174,14 +174,17 @@
     if (code === 0 || code === 1) {
       return { cls: 'icon-sun', icon: 'fa-sun' };
     }
-    if (code === 2 || code === 3) {
+    if (code === 2) {
+      return { cls: 'icon-cloud', icon: 'fa-cloud-sun' };
+    }
+    if (code === 3) {
       return { cls: 'icon-cloud', icon: 'fa-cloud' };
     }
     if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) {
-      return { cls: 'icon-rain', icon: 'fa-cloud-rain' };
+      return { cls: 'icon-rain', icon: 'fa-cloud-showers-heavy' };
     }
     if (code >= 95) {
-      return { cls: 'icon-storm', icon: 'fa-bolt' };
+      return { cls: 'icon-storm', icon: 'fa-cloud-bolt' };
     }
     if (code >= 71 && code <= 86) {
       return { cls: 'icon-snow', icon: 'fa-snowflake' };
@@ -553,6 +556,8 @@
     ref.temp.textContent = '-- C';
     ref.summary.textContent = 'Sin datos de clima';
     ref.meta.innerHTML = '<span class="meta-pill">No disponible</span>';
+    ref.icon.className = 'weather-icon card-fade icon-fog';
+    ref.icon.innerHTML = '<i class="fa-solid fa-circle-question"></i>';
     ref.icon.setAttribute('title', 'Clima no disponible');
     ref.icon.setAttribute('aria-label', 'Clima no disponible');
   }
@@ -764,11 +769,6 @@
 
     for (var i = 0; i < state.cards.length; i++) {
       (function (card) {
-        if (!card.weatherKey) {
-          renderWeatherError(card.id);
-          return;
-        }
-
         var p = fetchWeatherClientSide(weatherRequestForCard(card))
           .then(function (data) {
             renderWeatherOnCard(card.id, data);

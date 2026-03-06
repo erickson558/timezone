@@ -16,6 +16,8 @@ Version actual: revisar archivo `VERSION`.
 - Color dinamico por card segun estado del clima (soleado, lluvia, nublado, etc.).
 - Mejor contraste de textos y pildoras del clima para alta legibilidad.
 - Mejora de contraste en circulos (iconos de clima y badges) para identificar rapido cada estado.
+- Correccion de cards sin clima: ahora todas consultan fuentes gratuitas con fallback para evitar "No disponible".
+- Iconos de clima mejorados (tamano, contraste, color y jerarquia visual) para evitar apariencia gris.
 - Modo claro y modo oscuro persistente en navegador.
 - Arquitectura separada:
 - Frontend en `index.php` + `assets/css` + `assets/js`.
