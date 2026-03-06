@@ -20,9 +20,9 @@ Version actual: revisar archivo `VERSION`.
 - Iconos de clima mejorados (tamano, contraste, color y jerarquia visual) para evitar apariencia gris.
 - Cards restauradas a estilo uniforme (como versiones previas) con mejor legibilidad general.
 - Iconos de clima con fondo oscuro y colores de alto contraste por condicion.
-- Modo claro y modo oscuro persistente en navegador.
-- Selector de multiples temas visuales estilo Windows (98, XP, Vista, 7) con persistencia al cerrar y abrir el sitio.
-- Las cards mantienen estilo uniforme entre temas para consistencia visual.
+- Selector de 5 temas modernos con persistencia al cerrar y abrir el sitio:
+- `Aurora Flow`, `Neon Grid`, `Sunset Drive`, `Ice Mineral`, `Graphite Pop`.
+- Las cards tambien cambian su paleta por tema (fondo, bordes, acentos y contraste), no solo el fondo general.
 - Arquitectura separada:
 - Frontend en `index.php` + `assets/css` + `assets/js`.
 - Backend en `backend/api` y configuracion en `config/app.php`.

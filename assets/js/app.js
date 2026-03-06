@@ -31,10 +31,11 @@
   var draggingOrderKey = null;
 
   var THEMES = [
-    { id: 'win98', name: 'Windows 98' },
-    { id: 'winxp', name: 'Windows XP' },
-    { id: 'vista', name: 'Windows Vista' },
-    { id: 'win7', name: 'Windows 7' }
+    { id: 'aurora-flow', name: 'Aurora Flow' },
+    { id: 'neon-grid', name: 'Neon Grid' },
+    { id: 'sunset-drive', name: 'Sunset Drive' },
+    { id: 'ice-mineral', name: 'Ice Mineral' },
+    { id: 'graphite-pop', name: 'Graphite Pop' }
   ];
 
   function nowServerDate() {
@@ -76,23 +77,20 @@
   }
 
   function normalizeTheme(theme) {
-    if (theme === 'dark') {
-      return 'vista';
+    if (theme === 'dark' || theme === 'midnight' || theme === 'vista') {
+      return 'graphite-pop';
     }
-    if (theme === 'light') {
-      return 'winxp';
+    if (theme === 'light' || theme === 'ocean' || theme === 'winxp') {
+      return 'ice-mineral';
     }
-    if (theme === 'ocean') {
-      return 'winxp';
+    if (theme === 'sunset' || theme === 'win98') {
+      return 'sunset-drive';
     }
-    if (theme === 'midnight') {
-      return 'vista';
+    if (theme === 'forest' || theme === 'win7') {
+      return 'aurora-flow';
     }
-    if (theme === 'sunset') {
-      return 'win98';
-    }
-    if (theme === 'forest') {
-      return 'win7';
+    if (theme === 'cyber' || theme === 'neon' || theme === 'electric') {
+      return 'neon-grid';
     }
 
     for (var i = 0; i < THEMES.length; i++) {
@@ -100,7 +98,7 @@
         return theme;
       }
     }
-    return 'winxp';
+    return 'aurora-flow';
   }
 
   function getThemeName(themeId) {
@@ -109,7 +107,7 @@
         return THEMES[i].name;
       }
     }
-    return 'Windows XP';
+    return 'Aurora Flow';
   }
 
   function getNextTheme(themeId) {
@@ -198,7 +196,7 @@
 
   function initTheme() {
     var stored = localStorage.getItem(THEME_KEY) || localStorage.getItem('theme-preference');
-    var preferred = stored || 'winxp';
+    var preferred = stored || 'aurora-flow';
     applyTheme(preferred);
 
     if (elThemeSelector) {

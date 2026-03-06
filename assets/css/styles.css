@@ -1,79 +1,160 @@
 :root {
-  --bg-1: #c9dff2;
-  --bg-2: #f6efe2;
-  --glass: rgba(255, 255, 255, 0.38);
-  --text-main: #1b1f24;
-  --text-soft: #4d5662;
-  --line: rgba(27, 31, 36, 0.13);
-  --blue: #2e71f1;
-  --sun: #ffb347;
-  --cloud: #7a8aa0;
-  --rain: #3f86ff;
+  --bg-1: #0c2334;
+  --bg-2: #14636f;
+  --bg-3: #7ce3bf;
+  --text-main: #e9f6ff;
+  --text-soft: #b9d5e2;
+  --line: rgba(189, 228, 255, 0.28);
+  --panel-bg: rgba(11, 23, 33, 0.52);
+  --panel-border: rgba(177, 220, 249, 0.24);
+  --chip-bg: rgba(145, 206, 255, 0.2);
+  --chip-text: #ddf1ff;
+  --chip-border: rgba(174, 222, 255, 0.38);
+
+  --card-a: #0f2f3a;
+  --card-b: #17555d;
+  --card-line: rgba(142, 220, 212, 0.38);
+  --card-shadow: rgba(5, 14, 20, 0.42);
+  --card-text-main: #ecfbff;
+  --card-text-soft: #b1dbe2;
+  --card-accent: #8effe0;
+
+  --blue: #6ec3ff;
+  --sun: #ffbf57;
+  --cloud: #9db8d4;
+  --rain: #6fb4ff;
+
+  --blob-a: rgba(125, 244, 214, 0.35);
+  --blob-b: rgba(140, 191, 255, 0.28);
+  --blob-c: rgba(255, 204, 123, 0.26);
 }
 
-html[data-theme='dark'] {
-  --bg-1: #102341;
-  --bg-2: #202932;
-  --glass: rgba(15, 24, 35, 0.58);
-  --text-main: #e8edf2;
-  --text-soft: #acb8c5;
-  --line: rgba(232, 237, 242, 0.17);
-  --blue: #77a0ff;
-  --sun: #ffd170;
-  --cloud: #a2b2ca;
-  --rain: #7eb2ff;
+html[data-theme='aurora-flow'] {
+  --bg-1: #081e2b;
+  --bg-2: #0f5565;
+  --bg-3: #8af4cc;
+  --text-main: #e9f6ff;
+  --text-soft: #afd3dd;
+  --line: rgba(188, 232, 245, 0.3);
+  --panel-bg: rgba(7, 21, 30, 0.54);
+  --panel-border: rgba(179, 229, 238, 0.24);
+  --chip-bg: rgba(122, 223, 205, 0.22);
+  --chip-text: #dbfff2;
+  --chip-border: rgba(150, 238, 223, 0.45);
+  --card-a: #0d2f38;
+  --card-b: #176066;
+  --card-line: rgba(137, 230, 217, 0.42);
+  --card-shadow: rgba(4, 16, 22, 0.46);
+  --card-text-main: #ebfcff;
+  --card-text-soft: #a7d8dc;
+  --card-accent: #8fffe3;
+  --blue: #72c9ff;
+  --blob-a: rgba(125, 255, 226, 0.42);
+  --blob-b: rgba(129, 196, 255, 0.28);
+  --blob-c: rgba(255, 227, 160, 0.22);
 }
 
-html[data-theme='win98'] {
-  --bg-1: #0f6c91;
-  --bg-2: #39a2bf;
-  --glass: rgba(201, 219, 231, 0.45);
-  --text-main: #1b1f24;
-  --text-soft: #425367;
-  --line: rgba(17, 41, 63, 0.22);
-  --blue: #1a4c8f;
-  --sun: #ffb347;
-  --cloud: #6f8197;
-  --rain: #2278d7;
+html[data-theme='neon-grid'] {
+  --bg-1: #170a1f;
+  --bg-2: #0d1634;
+  --bg-3: #2b0f36;
+  --text-main: #f1e9ff;
+  --text-soft: #c8b5e6;
+  --line: rgba(221, 190, 255, 0.28);
+  --panel-bg: rgba(12, 9, 28, 0.62);
+  --panel-border: rgba(224, 183, 255, 0.24);
+  --chip-bg: rgba(210, 117, 255, 0.2);
+  --chip-text: #ffdfff;
+  --chip-border: rgba(237, 168, 255, 0.42);
+  --card-a: #241339;
+  --card-b: #11254a;
+  --card-line: rgba(242, 137, 255, 0.44);
+  --card-shadow: rgba(12, 4, 20, 0.56);
+  --card-text-main: #f7ecff;
+  --card-text-soft: #ccb6ea;
+  --card-accent: #ff8fff;
+  --blue: #93baff;
+  --blob-a: rgba(255, 110, 219, 0.35);
+  --blob-b: rgba(96, 150, 255, 0.32);
+  --blob-c: rgba(136, 255, 220, 0.22);
 }
 
-html[data-theme='winxp'] {
-  --bg-1: #7eb5ff;
-  --bg-2: #bfe3ff;
-  --glass: rgba(239, 249, 255, 0.5);
-  --text-main: #1d2a36;
-  --text-soft: #486175;
-  --line: rgba(36, 70, 107, 0.2);
-  --blue: #1f63cc;
-  --sun: #ffb64d;
-  --cloud: #6f859d;
-  --rain: #2d7fe0;
+html[data-theme='sunset-drive'] {
+  --bg-1: #2a1830;
+  --bg-2: #9f372d;
+  --bg-3: #f8b85c;
+  --text-main: #fff4e7;
+  --text-soft: #f3d8b6;
+  --line: rgba(255, 220, 175, 0.34);
+  --panel-bg: rgba(48, 26, 26, 0.5);
+  --panel-border: rgba(255, 214, 153, 0.3);
+  --chip-bg: rgba(255, 170, 95, 0.24);
+  --chip-text: #fff1d6;
+  --chip-border: rgba(255, 210, 153, 0.44);
+  --card-a: #4a2330;
+  --card-b: #b84f34;
+  --card-line: rgba(255, 196, 120, 0.48);
+  --card-shadow: rgba(34, 13, 12, 0.5);
+  --card-text-main: #fff5e5;
+  --card-text-soft: #ffd8b0;
+  --card-accent: #ffd17d;
+  --blue: #ffcb7c;
+  --blob-a: rgba(255, 188, 120, 0.4);
+  --blob-b: rgba(255, 116, 105, 0.34);
+  --blob-c: rgba(255, 225, 162, 0.28);
 }
 
-html[data-theme='vista'] {
-  --bg-1: #0e2a52;
-  --bg-2: #1c4b7a;
-  --glass: rgba(17, 33, 56, 0.58);
-  --text-main: #e7eef7;
-  --text-soft: #a9bbd1;
-  --line: rgba(226, 236, 255, 0.22);
-  --blue: #85b7ff;
-  --sun: #ffd173;
-  --cloud: #adc0d9;
-  --rain: #78b2ff;
+html[data-theme='ice-mineral'] {
+  --bg-1: #dff6ff;
+  --bg-2: #b5d6ea;
+  --bg-3: #8ab0ca;
+  --text-main: #112435;
+  --text-soft: #3f6179;
+  --line: rgba(31, 83, 116, 0.24);
+  --panel-bg: rgba(255, 255, 255, 0.62);
+  --panel-border: rgba(65, 118, 152, 0.24);
+  --chip-bg: rgba(134, 198, 230, 0.2);
+  --chip-text: #154061;
+  --chip-border: rgba(84, 150, 184, 0.4);
+  --card-a: #f5fbff;
+  --card-b: #d6ebf9;
+  --card-line: rgba(88, 145, 181, 0.36);
+  --card-shadow: rgba(50, 92, 121, 0.24);
+  --card-text-main: #112f46;
+  --card-text-soft: #40657e;
+  --card-accent: #2279b5;
+  --blue: #1f73ad;
+  --sun: #d8891f;
+  --cloud: #607f9e;
+  --rain: #2f79bc;
+  --blob-a: rgba(137, 206, 237, 0.36);
+  --blob-b: rgba(119, 174, 214, 0.28);
+  --blob-c: rgba(200, 228, 245, 0.45);
 }
 
-html[data-theme='win7'] {
-  --bg-1: #173a61;
-  --bg-2: #2c5c86;
-  --glass: rgba(21, 36, 57, 0.55);
-  --text-main: #ebf3ff;
-  --text-soft: #b4c6dd;
-  --line: rgba(229, 240, 255, 0.2);
-  --blue: #94c3ff;
-  --sun: #ffd27e;
-  --cloud: #a9bed8;
-  --rain: #7ab6ff;
+html[data-theme='graphite-pop'] {
+  --bg-1: #111319;
+  --bg-2: #2c3347;
+  --bg-3: #202f3d;
+  --text-main: #f1f4ff;
+  --text-soft: #b2bdd6;
+  --line: rgba(192, 204, 235, 0.28);
+  --panel-bg: rgba(13, 16, 24, 0.62);
+  --panel-border: rgba(167, 182, 212, 0.22);
+  --chip-bg: rgba(125, 153, 204, 0.22);
+  --chip-text: #e7eeff;
+  --chip-border: rgba(158, 184, 230, 0.42);
+  --card-a: #1a1f2e;
+  --card-b: #2c3652;
+  --card-line: rgba(157, 180, 230, 0.42);
+  --card-shadow: rgba(5, 8, 14, 0.58);
+  --card-text-main: #f2f6ff;
+  --card-text-soft: #b4c1de;
+  --card-accent: #8fb6ff;
+  --blue: #8fb6ff;
+  --blob-a: rgba(125, 173, 255, 0.3);
+  --blob-b: rgba(196, 145, 255, 0.24);
+  --blob-c: rgba(129, 232, 246, 0.2);
 }
 
 * {
@@ -84,16 +165,58 @@ body {
   margin: 0;
   color: var(--text-main);
   background:
-    radial-gradient(900px 360px at 8% -10%, rgba(46, 113, 241, 0.2), transparent 70%),
-    radial-gradient(800px 320px at 90% 4%, rgba(255, 179, 71, 0.28), transparent 65%),
-    linear-gradient(160deg, var(--bg-1), var(--bg-2));
+    radial-gradient(1100px 420px at 8% -10%, var(--blob-a), transparent 70%),
+    radial-gradient(900px 380px at 92% 0%, var(--blob-b), transparent 72%),
+    linear-gradient(145deg, var(--bg-1) 0%, var(--bg-2) 56%, var(--bg-3) 100%);
   min-height: 100vh;
   font-family: 'DM Sans', 'Segoe UI', sans-serif;
-  transition: background 240ms ease, color 240ms ease;
+  transition: background 260ms ease, color 260ms ease;
+}
+
+.ambient-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(28px);
+  opacity: 0.92;
+  animation: blobFloat 16s ease-in-out infinite;
+}
+
+.blob-a {
+  width: 280px;
+  height: 280px;
+  background: var(--blob-a);
+  left: -40px;
+  top: -40px;
+}
+
+.blob-b {
+  width: 320px;
+  height: 320px;
+  background: var(--blob-b);
+  right: -60px;
+  top: 24%;
+  animation-delay: -5s;
+}
+
+.blob-c {
+  width: 260px;
+  height: 260px;
+  background: var(--blob-c);
+  right: 14%;
+  bottom: -60px;
+  animation-delay: -9s;
 }
 
 .app-shell {
-  max-width: 1100px;
+  max-width: 1140px;
   margin: 0 auto;
   padding: 16px;
 }
@@ -112,7 +235,7 @@ body {
   font-weight: 700;
   letter-spacing: 0.02em;
   margin: 0;
-  font-size: clamp(1.1rem, 4.6vw, 1.6rem);
+  font-size: clamp(1.1rem, 4.6vw, 1.65rem);
 }
 
 .header-subtitle {
@@ -132,11 +255,13 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--panel-border);
   border-radius: 999px;
   padding: 6px 10px;
-  background: rgba(255, 255, 255, 0.62);
+  background: var(--panel-bg);
   color: var(--text-main);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .theme-select {
@@ -147,76 +272,37 @@ body {
   outline: none;
 }
 
-html[data-theme='vista'] .theme-select-wrap,
-html[data-theme='win7'] .theme-select-wrap {
-  background: rgba(9, 17, 29, 0.62);
-}
-
 .theme-btn {
-  border: 1px solid var(--line);
+  border: 1px solid var(--panel-border);
   border-radius: 999px;
   padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.44);
+  background: var(--panel-bg);
   color: var(--text-main);
   display: inline-flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
-}
-
-html[data-theme='dark'] .theme-btn {
-  background: rgba(15, 24, 35, 0.62);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .version-pill {
-  border: 1px solid rgba(31, 56, 104, 0.36);
+  border: 1px solid var(--panel-border);
   border-radius: 999px;
   padding: 6px 12px;
-  background: rgba(255, 255, 255, 0.88);
+  background: var(--panel-bg);
   font-size: 0.85rem;
-  color: #1b2e4e;
+  color: var(--text-main);
   font-weight: 700;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
-  box-shadow: 0 4px 10px rgba(17, 36, 65, 0.14);
-}
-
-html[data-theme='vista'] .version-pill,
-html[data-theme='win7'] .version-pill {
-  border: 1px solid rgba(130, 160, 255, 0.36);
-  background: rgba(11, 22, 39, 0.78);
-  color: #e8f0ff;
-  text-shadow: none;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.32);
-}
-
-html[data-theme='win98'] .version-pill {
-  border: 1px solid rgba(132, 66, 117, 0.35);
-  background: rgba(242, 247, 252, 0.92);
-  color: #1d3557;
-}
-
-html[data-theme='winxp'] .version-pill {
-  border: 1px solid rgba(34, 89, 172, 0.34);
-  background: rgba(245, 251, 255, 0.95);
-  color: #1f4d8c;
+  box-shadow: 0 6px 14px rgba(5, 11, 20, 0.2);
 }
 
 .version-pill #app-version {
   color: inherit;
 }
 
-.glass {
-  background: var(--glass);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-radius: 22px;
-  padding: 16px;
-  box-shadow: 0 14px 28px rgba(33, 47, 65, 0.18);
-}
-
 .section-title {
-  margin: 0 0 8px;
+  margin: 0;
   font-size: 1.05rem;
   font-weight: 700;
 }
@@ -240,19 +326,19 @@ html[data-theme='winxp'] .version-pill {
   min-width: 220px;
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--panel-bg);
   color: var(--text-main);
   padding: 8px 10px;
 }
 
-html[data-theme='dark'] .zone-input {
-  background: rgba(8, 14, 22, 0.75);
+.zone-input::placeholder {
+  color: var(--text-soft);
 }
 
 .zone-btn {
-  border: 1px solid rgba(46, 113, 241, 0.45);
-  color: #a7c2ff;
-  background: rgba(20, 53, 112, 0.55);
+  border: 1px solid var(--chip-border);
+  color: var(--chip-text);
+  background: var(--chip-bg);
   border-radius: 10px;
   padding: 8px 10px;
   font-weight: 700;
@@ -270,30 +356,24 @@ html[data-theme='dark'] .zone-input {
   gap: 12px;
 }
 
-.subtle {
-  color: var(--text-soft);
-  margin: 0;
-  font-size: 0.94rem;
-}
-
 .zone-card {
   border-radius: 20px;
-  border: 1px solid rgba(88, 127, 196, 0.35);
+  border: 1px solid var(--card-line);
   padding: 14px;
-  background: linear-gradient(165deg, rgba(38, 56, 90, 0.9), rgba(23, 35, 58, 0.92));
-  box-shadow: 0 14px 28px rgba(8, 15, 29, 0.45);
+  background: linear-gradient(160deg, var(--card-a), var(--card-b));
+  box-shadow: 0 14px 30px var(--card-shadow);
   display: flex;
   flex-direction: column;
   gap: 10px;
   animation: slideUp 360ms ease both;
 }
 
-.zone-card.weather-tone-clear { box-shadow: inset 0 0 0 1px rgba(255, 188, 78, 0.35), 0 14px 28px rgba(8, 15, 29, 0.45); }
-.zone-card.weather-tone-cloud { box-shadow: inset 0 0 0 1px rgba(156, 180, 214, 0.35), 0 14px 28px rgba(8, 15, 29, 0.45); }
-.zone-card.weather-tone-rain { box-shadow: inset 0 0 0 1px rgba(109, 169, 255, 0.4), 0 14px 28px rgba(8, 15, 29, 0.45); }
-.zone-card.weather-tone-storm { box-shadow: inset 0 0 0 1px rgba(255, 195, 88, 0.42), 0 14px 28px rgba(8, 15, 29, 0.45); }
-.zone-card.weather-tone-snow { box-shadow: inset 0 0 0 1px rgba(175, 219, 255, 0.45), 0 14px 28px rgba(8, 15, 29, 0.45); }
-.zone-card.weather-tone-fog { box-shadow: inset 0 0 0 1px rgba(181, 193, 214, 0.35), 0 14px 28px rgba(8, 15, 29, 0.45); }
+.zone-card.weather-tone-clear { box-shadow: inset 0 0 0 1px rgba(255, 193, 82, 0.38), 0 14px 30px var(--card-shadow); }
+.zone-card.weather-tone-cloud { box-shadow: inset 0 0 0 1px rgba(176, 194, 218, 0.38), 0 14px 30px var(--card-shadow); }
+.zone-card.weather-tone-rain { box-shadow: inset 0 0 0 1px rgba(118, 181, 255, 0.44), 0 14px 30px var(--card-shadow); }
+.zone-card.weather-tone-storm { box-shadow: inset 0 0 0 1px rgba(255, 203, 116, 0.44), 0 14px 30px var(--card-shadow); }
+.zone-card.weather-tone-snow { box-shadow: inset 0 0 0 1px rgba(178, 222, 255, 0.44), 0 14px 30px var(--card-shadow); }
+.zone-card.weather-tone-fog { box-shadow: inset 0 0 0 1px rgba(188, 201, 220, 0.34), 0 14px 30px var(--card-shadow); }
 
 .zone-card-header {
   display: flex;
@@ -309,52 +389,64 @@ html[data-theme='dark'] .zone-input {
 }
 
 .zone-order-btn {
-  border: 1px solid rgba(46, 113, 241, 0.45);
-  background: rgba(20, 53, 112, 0.6);
-  color: #a7c2ff;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-bg);
+  color: var(--chip-text);
   border-radius: 8px;
   padding: 2px 8px;
   cursor: pointer;
 }
 
 .zone-remove-btn {
-  border: 1px solid rgba(231, 74, 59, 0.45);
-  background: rgba(231, 74, 59, 0.14);
-  color: #d43a2a;
+  border: 1px solid rgba(255, 125, 125, 0.6);
+  background: rgba(200, 54, 54, 0.2);
+  color: #ffe3e3;
   border-radius: 8px;
   padding: 2px 8px;
   cursor: pointer;
 }
 
+html[data-theme='ice-mineral'] .zone-remove-btn {
+  border: 1px solid rgba(183, 53, 53, 0.48);
+  background: rgba(213, 88, 88, 0.18);
+  color: #712e2e;
+}
+
 .zone-card.is-dragging {
-  opacity: 0.6;
+  opacity: 0.66;
   transform: scale(0.98);
 }
 
 .zone-badge {
-  border: 1px solid rgba(46, 113, 241, 0.4);
-  color: #8fb2ff;
+  border: 1px solid var(--chip-border);
+  color: var(--chip-text);
   border-radius: 999px;
-  background: rgba(20, 53, 112, 0.55);
+  background: var(--chip-bg);
   padding: 3px 8px;
   font-size: 0.76rem;
   font-weight: 700;
 }
 
 .zone-abbr {
-  background: rgba(13, 94, 66, 0.72);
-  border-color: rgba(67, 226, 161, 0.55);
-  color: #9dffd7;
+  background: rgba(41, 184, 132, 0.22);
+  border-color: rgba(92, 255, 190, 0.45);
+  color: #bcffe5;
+}
+
+html[data-theme='ice-mineral'] .zone-abbr {
+  background: rgba(49, 145, 112, 0.15);
+  border-color: rgba(49, 145, 112, 0.38);
+  color: #1f735a;
 }
 
 .zone-name {
   font-weight: 700;
-  color: #f0f5ff;
+  color: var(--card-text-main);
 }
 
 .zone-city {
   margin-top: 2px;
-  color: #afc2df;
+  color: var(--card-text-soft);
   font-size: 0.86rem;
 }
 
@@ -363,30 +455,29 @@ html[data-theme='dark'] .zone-input {
   font-size: 2rem;
   line-height: 1;
   letter-spacing: 0.02em;
-  color: #eef4ff;
+  color: var(--card-text-main);
 }
 
 .zone-offset {
   font-weight: 700;
-  color: var(--blue);
-  border: 1px solid rgba(46, 113, 241, 0.3);
+  color: var(--card-accent);
+  border: 1px solid var(--chip-border);
   border-radius: 999px;
   padding: 4px 10px;
-  background: rgba(46, 113, 241, 0.1);
+  background: var(--chip-bg);
   white-space: nowrap;
 }
 
 .zone-date {
   font-size: 0.9rem;
-  color: #b9cae4;
+  color: var(--card-text-soft);
 }
 
 .zone-iana {
   font-size: 0.8rem;
-  color: #9cb2d4;
+  color: var(--card-text-soft);
   opacity: 0.9;
 }
-
 
 .weather-row {
   display: grid;
@@ -405,41 +496,13 @@ html[data-theme='dark'] .zone-input {
   font-family: 'Outfit', 'Segoe UI', sans-serif;
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--text-main);
+  color: var(--card-text-main);
 }
 
 .card-weather-label {
-  color: var(--text-main);
+  color: var(--card-text-main);
   font-size: 0.88rem;
   font-weight: 600;
-}
-
-.weather-wrap {
-  display: grid;
-  gap: 12px;
-}
-
-.weather-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-}
-
-.weather-select {
-  width: 100%;
-  border-radius: 12px;
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.75);
-  padding: 10px;
-  color: var(--text-main);
-}
-
-.weather-core {
-  display: grid;
-  grid-template-columns: 84px 1fr;
-  gap: 12px;
-  align-items: center;
 }
 
 .weather-icon {
@@ -451,7 +514,7 @@ html[data-theme='dark'] .zone-input {
   font-size: 1.85rem;
   position: relative;
   overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.32);
+  border: 2px solid rgba(255, 255, 255, 0.36);
   background: radial-gradient(circle at 35% 28%, rgba(38, 53, 83, 0.95), rgba(13, 19, 33, 0.96));
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05), 0 8px 18px rgba(0, 0, 0, 0.42);
 }
@@ -527,13 +590,6 @@ html[data-theme='dark'] .zone-input {
   background: radial-gradient(circle at 30% 22%, rgba(60, 70, 88, 0.96), rgba(13, 18, 32, 0.98));
 }
 
-.temp {
-  font-family: 'Outfit', 'Segoe UI', sans-serif;
-  font-size: 2rem;
-  font-weight: 700;
-  line-height: 1;
-}
-
 .weather-meta {
   display: flex;
   flex-wrap: wrap;
@@ -541,34 +597,13 @@ html[data-theme='dark'] .zone-input {
 }
 
 .meta-pill {
-  border: 1px solid rgba(255, 255, 255, 0.42);
-  background: rgba(255, 255, 255, 0.32);
+  border: 1px solid var(--chip-border);
+  background: var(--chip-bg);
   border-radius: 999px;
   padding: 5px 10px;
   font-size: 0.82rem;
-  color: var(--text-main);
+  color: var(--chip-text);
   font-weight: 600;
-}
-
-html[data-theme='dark'] .meta-pill {
-  border: 1px solid rgba(232, 237, 242, 0.32);
-  background: rgba(12, 19, 30, 0.42);
-  color: #e8edf2;
-}
-
-html[data-theme='dark'] .weather-icon {
-  border: 2px solid rgba(233, 242, 255, 0.7);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 8px 18px rgba(0, 0, 0, 0.45);
-}
-
-html[data-theme='vista'] .card-weather-label,
-html[data-theme='win7'] .card-weather-label {
-  color: #edf3ff;
-}
-
-html[data-theme='vista'] .card-temp,
-html[data-theme='win7'] .card-temp {
-  color: #ffffff;
 }
 
 .api-note {
@@ -623,4 +658,36 @@ html[data-theme='win7'] .card-temp {
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes blobFloat {
+  0% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-12px) scale(1.04); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 740px) {
+  .topbar {
+    align-items: flex-start;
+  }
+
+  .topbar-actions {
+    width: 100%;
+  }
+
+  .theme-select-wrap,
+  .theme-btn,
+  .version-pill {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .zone-controls {
+    width: 100%;
+  }
+
+  .zone-input,
+  .zone-btn {
+    width: 100%;
+  }
 }

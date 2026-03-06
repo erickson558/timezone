@@ -34,13 +34,14 @@
         <label class="theme-select-wrap" for="theme-selector">
           <i class="fa-solid fa-palette"></i>
           <select id="theme-selector" class="theme-select" aria-label="Seleccionar tema visual">
-            <option value="win98">Windows 98</option>
-            <option value="winxp">Windows XP</option>
-            <option value="vista">Windows Vista</option>
-            <option value="win7">Windows 7</option>
+            <option value="aurora-flow">Aurora Flow</option>
+            <option value="neon-grid">Neon Grid</option>
+            <option value="sunset-drive">Sunset Drive</option>
+            <option value="ice-mineral">Ice Mineral</option>
+            <option value="graphite-pop">Graphite Pop</option>
           </select>
         </label>
-        <button id="theme-toggle" class="theme-btn" type="button" aria-label="Cambiar tema claro u oscuro">
+        <button id="theme-toggle" class="theme-btn" type="button" aria-label="Cambiar tema visual">
           <i class="fa-solid fa-circle-half-stroke"></i>
           <span id="theme-label">Cambiar tema</span>
         </button>
