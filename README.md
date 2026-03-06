@@ -15,6 +15,7 @@ Version actual: revisar archivo `VERSION`.
 - Clima en vivo por cada card desde Open-Meteo con iconografia animada.
 - Color dinamico por card segun estado del clima (soleado, lluvia, nublado, etc.).
 - Mejor contraste de textos y pildoras del clima para alta legibilidad.
+- Mejora de contraste en circulos (iconos de clima y badges) para identificar rapido cada estado.
 - Modo claro y modo oscuro persistente en navegador.
 - Arquitectura separada:
 - Frontend en `index.php` + `assets/css` + `assets/js`.

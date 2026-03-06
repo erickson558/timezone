@@ -523,6 +523,8 @@
 
     ref.icon.className = 'weather-icon card-fade ' + icon.cls;
     ref.icon.innerHTML = '<i class="fa-solid ' + icon.icon + '"></i>';
+    ref.icon.setAttribute('title', 'Clima: ' + weather.weatherLabel);
+    ref.icon.setAttribute('aria-label', 'Clima: ' + weather.weatherLabel);
 
     if (cardEl) {
       cardEl.classList.remove('weather-tone-clear', 'weather-tone-cloud', 'weather-tone-rain', 'weather-tone-storm', 'weather-tone-snow', 'weather-tone-fog');
@@ -551,6 +553,8 @@
     ref.temp.textContent = '-- C';
     ref.summary.textContent = 'Sin datos de clima';
     ref.meta.innerHTML = '<span class="meta-pill">No disponible</span>';
+    ref.icon.setAttribute('title', 'Clima no disponible');
+    ref.icon.setAttribute('aria-label', 'Clima no disponible');
   }
 
   function normalizeWeatherValue(value, fallback) {
