@@ -34,10 +34,10 @@
         <label class="theme-select-wrap" for="theme-selector">
           <i class="fa-solid fa-palette"></i>
           <select id="theme-selector" class="theme-select" aria-label="Seleccionar tema visual">
-            <option value="ocean">Ocean</option>
-            <option value="midnight">Midnight</option>
-            <option value="sunset">Sunset</option>
-            <option value="forest">Forest</option>
+            <option value="win98">Windows 98</option>
+            <option value="winxp">Windows XP</option>
+            <option value="vista">Windows Vista</option>
+            <option value="win7">Windows 7</option>
           </select>
         </label>
         <button id="theme-toggle" class="theme-btn" type="button" aria-label="Cambiar tema claro u oscuro">

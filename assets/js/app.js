@@ -31,10 +31,10 @@
   var draggingOrderKey = null;
 
   var THEMES = [
-    { id: 'ocean', name: 'Ocean' },
-    { id: 'midnight', name: 'Midnight' },
-    { id: 'sunset', name: 'Sunset' },
-    { id: 'forest', name: 'Forest' }
+    { id: 'win98', name: 'Windows 98' },
+    { id: 'winxp', name: 'Windows XP' },
+    { id: 'vista', name: 'Windows Vista' },
+    { id: 'win7', name: 'Windows 7' }
   ];
 
   function nowServerDate() {
@@ -77,10 +77,22 @@
 
   function normalizeTheme(theme) {
     if (theme === 'dark') {
-      return 'midnight';
+      return 'vista';
     }
     if (theme === 'light') {
-      return 'ocean';
+      return 'winxp';
+    }
+    if (theme === 'ocean') {
+      return 'winxp';
+    }
+    if (theme === 'midnight') {
+      return 'vista';
+    }
+    if (theme === 'sunset') {
+      return 'win98';
+    }
+    if (theme === 'forest') {
+      return 'win7';
     }
 
     for (var i = 0; i < THEMES.length; i++) {
@@ -88,7 +100,7 @@
         return theme;
       }
     }
-    return 'ocean';
+    return 'winxp';
   }
 
   function getThemeName(themeId) {
@@ -97,7 +109,7 @@
         return THEMES[i].name;
       }
     }
-    return 'Ocean';
+    return 'Windows XP';
   }
 
   function getNextTheme(themeId) {
@@ -186,7 +198,7 @@
 
   function initTheme() {
     var stored = localStorage.getItem(THEME_KEY) || localStorage.getItem('theme-preference');
-    var preferred = stored || 'ocean';
+    var preferred = stored || 'winxp';
     applyTheme(preferred);
 
     if (elThemeSelector) {
