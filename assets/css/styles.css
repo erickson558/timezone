@@ -24,6 +24,58 @@ html[data-theme='dark'] {
   --rain: #7eb2ff;
 }
 
+html[data-theme='ocean'] {
+  --bg-1: #c9dff2;
+  --bg-2: #f6efe2;
+  --glass: rgba(255, 255, 255, 0.38);
+  --text-main: #1b1f24;
+  --text-soft: #4d5662;
+  --line: rgba(27, 31, 36, 0.13);
+  --blue: #2e71f1;
+  --sun: #ffb347;
+  --cloud: #7a8aa0;
+  --rain: #3f86ff;
+}
+
+html[data-theme='midnight'] {
+  --bg-1: #102341;
+  --bg-2: #202932;
+  --glass: rgba(15, 24, 35, 0.58);
+  --text-main: #e8edf2;
+  --text-soft: #acb8c5;
+  --line: rgba(232, 237, 242, 0.17);
+  --blue: #77a0ff;
+  --sun: #ffd170;
+  --cloud: #a2b2ca;
+  --rain: #7eb2ff;
+}
+
+html[data-theme='sunset'] {
+  --bg-1: #f7d9bf;
+  --bg-2: #f2b8a7;
+  --glass: rgba(255, 246, 240, 0.4);
+  --text-main: #2d1e25;
+  --text-soft: #644754;
+  --line: rgba(45, 30, 37, 0.18);
+  --blue: #a448f5;
+  --sun: #ff9e4f;
+  --cloud: #8f7da2;
+  --rain: #5f84ff;
+}
+
+html[data-theme='forest'] {
+  --bg-1: #cadfc5;
+  --bg-2: #9fc7a2;
+  --glass: rgba(244, 255, 241, 0.4);
+  --text-main: #1e2a1f;
+  --text-soft: #445d46;
+  --line: rgba(30, 42, 31, 0.17);
+  --blue: #1f7a59;
+  --sun: #f5b83d;
+  --cloud: #708d77;
+  --rain: #2f8fcb;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -72,7 +124,31 @@ body {
 .topbar-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
+}
+
+.theme-select-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.62);
+  color: var(--text-main);
+}
+
+.theme-select {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-weight: 700;
+  outline: none;
+}
+
+html[data-theme='midnight'] .theme-select-wrap {
+  background: rgba(9, 17, 29, 0.62);
 }
 
 .theme-btn {
@@ -92,12 +168,39 @@ html[data-theme='dark'] .theme-btn {
 }
 
 .version-pill {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(31, 56, 104, 0.36);
   border-radius: 999px;
   padding: 6px 12px;
-  background: rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.88);
   font-size: 0.85rem;
-  color: var(--text-soft);
+  color: #1b2e4e;
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+  box-shadow: 0 4px 10px rgba(17, 36, 65, 0.14);
+}
+
+html[data-theme='midnight'] .version-pill {
+  border: 1px solid rgba(130, 160, 255, 0.36);
+  background: rgba(11, 22, 39, 0.78);
+  color: #e8f0ff;
+  text-shadow: none;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.32);
+}
+
+html[data-theme='sunset'] .version-pill {
+  border: 1px solid rgba(132, 66, 117, 0.35);
+  background: rgba(255, 241, 239, 0.9);
+  color: #5a2e4f;
+}
+
+html[data-theme='forest'] .version-pill {
+  border: 1px solid rgba(34, 103, 74, 0.35);
+  background: rgba(243, 255, 244, 0.9);
+  color: #1f533f;
+}
+
+.version-pill #app-version {
+  color: inherit;
 }
 
 .glass {

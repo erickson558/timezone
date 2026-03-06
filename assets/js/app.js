@@ -6,6 +6,7 @@
   var elCards = document.getElementById('zone-cards');
   var elThemeToggle = document.getElementById('theme-toggle');
   var elThemeLabel = document.getElementById('theme-label');
+  var elThemeSelector = document.getElementById('theme-selector');
   var elZoneInput = document.getElementById('zone-input');
   var elAddZoneBtn = document.getElementById('add-zone-btn');
   var elSuggestions = document.getElementById('timezone-suggestions');
@@ -26,7 +27,15 @@
 
   var CUSTOM_ZONES_KEY = 'timezone-custom-zones-v1';
   var CARD_ORDER_KEY = 'timezone-card-order-v1';
+  var THEME_KEY = 'theme-preference-v2';
   var draggingOrderKey = null;
+
+  var THEMES = [
+    { id: 'ocean', name: 'Ocean' },
+    { id: 'midnight', name: 'Midnight' },
+    { id: 'sunset', name: 'Sunset' },
+    { id: 'forest', name: 'Forest' }
+  ];
 
   function nowServerDate() {
     return new Date(Date.now() + state.driftMs);
@@ -67,7 +76,37 @@
   }
 
   function normalizeTheme(theme) {
-    return theme === 'dark' ? 'dark' : 'light';
+    if (theme === 'dark') {
+      return 'midnight';
+    }
+    if (theme === 'light') {
+      return 'ocean';
+    }
+
+    for (var i = 0; i < THEMES.length; i++) {
+      if (THEMES[i].id === theme) {
+        return theme;
+      }
+    }
+    return 'ocean';
+  }
+
+  function getThemeName(themeId) {
+    for (var i = 0; i < THEMES.length; i++) {
+      if (THEMES[i].id === themeId) {
+        return THEMES[i].name;
+      }
+    }
+    return 'Ocean';
+  }
+
+  function getNextTheme(themeId) {
+    for (var i = 0; i < THEMES.length; i++) {
+      if (THEMES[i].id === themeId) {
+        return THEMES[(i + 1) % THEMES.length].id;
+      }
+    }
+    return THEMES[0].id;
   }
 
   function isValidTimezone(tz) {
@@ -138,18 +177,27 @@
   function applyTheme(theme) {
     var finalTheme = normalizeTheme(theme);
     document.documentElement.setAttribute('data-theme', finalTheme);
-    localStorage.setItem('theme-preference', finalTheme);
-    elThemeLabel.textContent = finalTheme === 'dark' ? 'Modo claro' : 'Modo oscuro';
+    localStorage.setItem(THEME_KEY, finalTheme);
+    elThemeLabel.textContent = 'Tema: ' + getThemeName(finalTheme);
+    if (elThemeSelector) {
+      elThemeSelector.value = finalTheme;
+    }
   }
 
   function initTheme() {
-    var stored = localStorage.getItem('theme-preference');
-    var preferred = stored || 'light';
+    var stored = localStorage.getItem(THEME_KEY) || localStorage.getItem('theme-preference');
+    var preferred = stored || 'ocean';
     applyTheme(preferred);
+
+    if (elThemeSelector) {
+      elThemeSelector.addEventListener('change', function () {
+        applyTheme(this.value);
+      });
+    }
 
     elThemeToggle.addEventListener('click', function () {
       var current = document.documentElement.getAttribute('data-theme');
-      applyTheme(current === 'dark' ? 'light' : 'dark');
+      applyTheme(getNextTheme(current));
     });
   }
 
@@ -382,6 +430,11 @@
         summary: document.getElementById('summary-' + id),
         meta: document.getElementById('meta-' + id)
       };
+
+      var cardEl = document.getElementById('card-' + id);
+      if (cardEl) {
+        cardEl.style.animationDelay = ((j % 8) * 60) + 'ms';
+      }
     }
 
     bindRemoveZoneButtons();

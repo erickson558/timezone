@@ -18,6 +18,12 @@
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
+  <div class="ambient-bg" aria-hidden="true">
+    <span class="blob blob-a"></span>
+    <span class="blob blob-b"></span>
+    <span class="blob blob-c"></span>
+  </div>
+
   <div class="app-shell">
     <header class="topbar">
       <div>
@@ -25,9 +31,18 @@
         <p class="header-subtitle">Hora, diferencia horaria y clima en cada zona</p>
       </div>
       <div class="topbar-actions">
+        <label class="theme-select-wrap" for="theme-selector">
+          <i class="fa-solid fa-palette"></i>
+          <select id="theme-selector" class="theme-select" aria-label="Seleccionar tema visual">
+            <option value="ocean">Ocean</option>
+            <option value="midnight">Midnight</option>
+            <option value="sunset">Sunset</option>
+            <option value="forest">Forest</option>
+          </select>
+        </label>
         <button id="theme-toggle" class="theme-btn" type="button" aria-label="Cambiar tema claro u oscuro">
           <i class="fa-solid fa-circle-half-stroke"></i>
-          <span id="theme-label">Modo oscuro</span>
+          <span id="theme-label">Cambiar tema</span>
         </button>
         <span class="version-pill">Version <span id="app-version">V0.0.0</span></span>
       </div>

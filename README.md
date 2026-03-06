@@ -21,6 +21,7 @@ Version actual: revisar archivo `VERSION`.
 - Cards restauradas a estilo uniforme (como versiones previas) con mejor legibilidad general.
 - Iconos de clima con fondo oscuro y colores de alto contraste por condicion.
 - Modo claro y modo oscuro persistente en navegador.
+- Selector de multiples temas visuales (Ocean, Midnight, Sunset, Forest) con persistencia al cerrar y abrir el sitio.
 - Arquitectura separada:
 - Frontend en `index.php` + `assets/css` + `assets/js`.
 - Backend en `backend/api` y configuracion en `config/app.php`.
