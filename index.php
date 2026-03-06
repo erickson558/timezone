@@ -20,38 +20,25 @@
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <h1 class="brand">GT vs USA Timeboard</h1>
-      <span class="version-pill">Version <span id="app-version">V0.0.0</span></span>
+      <div>
+        <h1 class="brand">GT vs USA Timeboard</h1>
+        <p class="header-subtitle">Hora, diferencia horaria y clima en cada zona</p>
+      </div>
+      <div class="topbar-actions">
+        <button id="theme-toggle" class="theme-btn" type="button" aria-label="Cambiar tema claro u oscuro">
+          <i class="fa-solid fa-circle-half-stroke"></i>
+          <span id="theme-label">Modo oscuro</span>
+        </button>
+        <span class="version-pill">Version <span id="app-version">V0.0.0</span></span>
+      </div>
     </header>
 
-    <main class="grid">
-      <section class="glass card-fade">
-        <h2 class="section-title">Hora actual en Guatemala</h2>
-        <p id="gt-time" class="gt-time">--:--:--</p>
-        <p id="gt-date" class="subtle">Cargando fecha...</p>
-        <p class="subtle">Estado de sincronizacion: <strong id="sync-status">Iniciando...</strong></p>
+    <p class="sync-row">Estado de sincronizacion: <strong id="sync-status">Iniciando...</strong></p>
 
-        <h3 class="section-title" style="margin-top:16px;">Comparacion GT vs zonas USA</h3>
-        <div id="compare-list" class="compare-list"></div>
-      </section>
-
-      <section class="glass card-fade">
-        <h2 class="section-title">Clima en vivo</h2>
-        <div class="weather-wrap">
-          <div class="weather-top">
-            <select id="weather-location" class="weather-select" aria-label="Seleccion de ciudad para clima"></select>
-          </div>
-
-          <div class="weather-core">
-            <div id="weather-icon" class="weather-icon icon-cloud"><i class="fa-solid fa-cloud"></i></div>
-            <div>
-              <div id="weather-temp" class="temp">-- C</div>
-              <p id="weather-summary" class="subtle">Cargando clima...</p>
-            </div>
-          </div>
-
-          <div id="weather-meta" class="weather-meta"></div>
-        </div>
+    <main>
+      <section>
+        <h2 class="section-title">Cards de zonas horarias y clima</h2>
+        <div id="zone-cards" class="cards-grid"></div>
       </section>
     </main>
   </div>

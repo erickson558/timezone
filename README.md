@@ -1,14 +1,16 @@
 # Timezone GT-USA Weather
 
-Aplicacion web PHP para comparar en tiempo real la hora de Guatemala (GT) contra zonas horarias de USA y mostrar clima en vivo con iconos animados estilo iPhone.
+Aplicacion web PHP para comparar en tiempo real la hora de Guatemala (GT) contra zonas horarias de USA y mostrar clima en vivo con iconos animados estilo iPhone en cada card.
 
 Version actual: revisar archivo `VERSION`.
 
 ## Caracteristicas
 
-- Comparacion horaria en vivo de GT vs zonas principales de USA.
+- Cards por zona (GT + USA) con hora, fecha, diferencia vs GT y clima.
+- Comparacion horaria en vivo de GT vs zonas principales de USA sin parpadeo visual.
 - Ajuste automatico por DST usando `Intl` del navegador.
-- Clima en vivo desde Open-Meteo con iconografia animada.
+- Clima en vivo por cada card desde Open-Meteo con iconografia animada.
+- Modo claro y modo oscuro persistente en navegador.
 - Arquitectura separada:
 - Frontend en `index.php` + `assets/css` + `assets/js`.
 - Backend en `backend/api` y configuracion en `config/app.php`.
@@ -62,7 +64,7 @@ Version actual: revisar archivo `VERSION`.
 
 ## Versionamiento
 
-Se usa Semantic Versioning con formato `VMAJOR.MINOR.PATCH`.
+Se usa Semantic Versioning con formato `VMAJOR.MINOR.PATCH` y el cambio de version se hace antes de cada commit.
 
 Buenas practicas aplicadas:
 
@@ -76,10 +78,9 @@ El archivo `VERSION` es la fuente de verdad para la version mostrada en la app.
 
 El workflow `release.yml` corre en cada push a `main`:
 
-1. Incrementa `PATCH` en `VERSION`.
-2. Hace commit automatico del nuevo `VERSION`.
-3. Crea tag `Vx.x.x`.
-4. Publica GitHub Release.
+1. Lee `VERSION` como fuente de verdad.
+2. Crea tag `Vx.x.x` si no existe.
+3. Publica GitHub Release para esa version.
 
 ## Favicon .ico
 

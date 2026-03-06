@@ -1,14 +1,27 @@
 :root {
   --bg-1: #c9dff2;
   --bg-2: #f6efe2;
-  --glass: rgba(255, 255, 255, 0.35);
+  --glass: rgba(255, 255, 255, 0.38);
   --text-main: #1b1f24;
   --text-soft: #4d5662;
-  --line: rgba(27, 31, 36, 0.12);
+  --line: rgba(27, 31, 36, 0.13);
   --blue: #2e71f1;
   --sun: #ffb347;
   --cloud: #7a8aa0;
   --rain: #3f86ff;
+}
+
+html[data-theme='dark'] {
+  --bg-1: #102341;
+  --bg-2: #202932;
+  --glass: rgba(15, 24, 35, 0.58);
+  --text-main: #e8edf2;
+  --text-soft: #acb8c5;
+  --line: rgba(232, 237, 242, 0.17);
+  --blue: #77a0ff;
+  --sun: #ffd170;
+  --cloud: #a2b2ca;
+  --rain: #7eb2ff;
 }
 
 * {
@@ -24,6 +37,7 @@ body {
     linear-gradient(160deg, var(--bg-1), var(--bg-2));
   min-height: 100vh;
   font-family: 'DM Sans', 'Segoe UI', sans-serif;
+  transition: background 240ms ease, color 240ms ease;
 }
 
 .app-shell {
@@ -36,6 +50,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 16px;
 }
@@ -48,6 +63,34 @@ body {
   font-size: clamp(1.1rem, 4.6vw, 1.6rem);
 }
 
+.header-subtitle {
+  margin: 4px 0 0;
+  color: var(--text-soft);
+  font-size: 0.92rem;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.theme-btn {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.44);
+  color: var(--text-main);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+html[data-theme='dark'] .theme-btn {
+  background: rgba(15, 24, 35, 0.62);
+}
+
 .version-pill {
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -55,17 +98,6 @@ body {
   background: rgba(255, 255, 255, 0.45);
   font-size: 0.85rem;
   color: var(--text-soft);
-}
-
-.grid {
-  display: grid;
-  gap: 14px;
-}
-
-@media (min-width: 860px) {
-  .grid {
-    grid-template-columns: 1.4fr 1fr;
-  }
 }
 
 .glass {
@@ -84,12 +116,15 @@ body {
   font-weight: 700;
 }
 
-.gt-time {
-  font-family: 'Outfit', 'Segoe UI', sans-serif;
-  font-size: clamp(2rem, 10vw, 3.5rem);
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  margin: 6px 0;
+.sync-row {
+  margin: 8px 0 16px;
+  color: var(--text-soft);
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
 }
 
 .subtle {
@@ -98,37 +133,51 @@ body {
   font-size: 0.94rem;
 }
 
-.compare-list {
-  display: grid;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.compare-item {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 10px;
-  align-items: center;
-  padding: 11px 12px;
-  border-radius: 14px;
+.zone-card {
+  border-radius: 20px;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.42);
+  padding: 14px;
+  background: var(--glass);
+  box-shadow: 0 12px 24px rgba(17, 26, 39, 0.2);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   animation: slideUp 360ms ease both;
 }
 
-.compare-main {
+.zone-card-header {
   display: flex;
-  flex-direction: column;
-  gap: 3px;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.zone-badge {
+  border: 1px solid rgba(46, 113, 241, 0.4);
+  color: var(--blue);
+  border-radius: 999px;
+  background: rgba(46, 113, 241, 0.12);
+  padding: 3px 8px;
+  font-size: 0.76rem;
 }
 
 .zone-name {
   font-weight: 700;
 }
 
+.zone-city {
+  margin-top: 2px;
+  color: var(--text-soft);
+  font-size: 0.86rem;
+}
+
 .zone-time {
   font-family: 'Outfit', 'Segoe UI', sans-serif;
-  font-size: 1.02rem;
+  font-size: 2rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
 }
 
 .zone-offset {
@@ -139,6 +188,35 @@ body {
   padding: 4px 10px;
   background: rgba(46, 113, 241, 0.1);
   white-space: nowrap;
+}
+
+.zone-date {
+  font-size: 0.9rem;
+  color: var(--text-soft);
+}
+
+.weather-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.weather-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-temp {
+  font-family: 'Outfit', 'Segoe UI', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.card-weather-label {
+  color: var(--text-soft);
+  font-size: 0.85rem;
 }
 
 .weather-wrap {
@@ -170,12 +248,12 @@ body {
 }
 
 .weather-icon {
-  width: 78px;
-  height: 78px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
   display: grid;
   place-items: center;
-  font-size: 2rem;
+  font-size: 1.4rem;
   position: relative;
   overflow: hidden;
   border: 1px solid var(--line);
@@ -230,7 +308,6 @@ body {
 }
 
 .weather-meta {
-  margin-top: 6px;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;

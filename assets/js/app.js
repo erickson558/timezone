@@ -1,22 +1,19 @@
 (function () {
   'use strict';
 
-  var elGtTime = document.getElementById('gt-time');
-  var elGtDate = document.getElementById('gt-date');
   var elSync = document.getElementById('sync-status');
-  var elCompare = document.getElementById('compare-list');
   var elVersion = document.getElementById('app-version');
-  var elWeatherLocation = document.getElementById('weather-location');
-  var elWeatherIcon = document.getElementById('weather-icon');
-  var elWeatherTemp = document.getElementById('weather-temp');
-  var elWeatherSummary = document.getElementById('weather-summary');
-  var elWeatherMeta = document.getElementById('weather-meta');
+  var elCards = document.getElementById('zone-cards');
+  var elThemeToggle = document.getElementById('theme-toggle');
+  var elThemeLabel = document.getElementById('theme-label');
 
   var state = {
     driftMs: 0,
     gtZone: 'America/Guatemala',
     usaZones: [],
-    weatherLocations: []
+    weatherLocations: [],
+    cards: [],
+    cardRefs: {}
   };
 
   function nowServerDate() {
@@ -43,6 +40,28 @@
     });
   }
 
+  function normalizeTheme(theme) {
+    return theme === 'dark' ? 'dark' : 'light';
+  }
+
+  function applyTheme(theme) {
+    var finalTheme = normalizeTheme(theme);
+    document.documentElement.setAttribute('data-theme', finalTheme);
+    localStorage.setItem('theme-preference', finalTheme);
+    elThemeLabel.textContent = finalTheme === 'dark' ? 'Modo claro' : 'Modo oscuro';
+  }
+
+  function initTheme() {
+    var stored = localStorage.getItem('theme-preference');
+    var preferred = stored || 'light';
+    applyTheme(preferred);
+
+    elThemeToggle.addEventListener('click', function () {
+      var current = document.documentElement.getAttribute('data-theme');
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    });
+  }
+
   function zoneOffsetMinutes(date, zone) {
     var zoneDateString = date.toLocaleString('en-US', { timeZone: zone });
     var zoneDate = new Date(zoneDateString);
@@ -58,32 +77,6 @@
       return 'GT +' + diffHours + 'h';
     }
     return 'GT ' + diffHours + 'h';
-  }
-
-  function renderClockAndComparison() {
-    var now = nowServerDate();
-    var gtTime = formatTime(now, state.gtZone);
-    var gtDate = formatDate(now, state.gtZone);
-
-    elGtTime.textContent = gtTime;
-    elGtDate.textContent = gtDate + ' (' + state.gtZone + ')';
-
-    var gtOffset = zoneOffsetMinutes(now, state.gtZone);
-    var html = '';
-    for (var i = 0; i < state.usaZones.length; i++) {
-      var zone = state.usaZones[i];
-      var targetTime = formatTime(now, zone.iana);
-      var targetOffset = zoneOffsetMinutes(now, zone.iana);
-      var diffText = prettyDiff(gtOffset, targetOffset);
-      html += '<div class="compare-item">';
-      html += '<div class="compare-main">';
-      html += '<span class="zone-name">' + zone.label + ' - ' + zone.city + '</span>';
-      html += '<span class="zone-time">' + targetTime + ' (' + zone.iana + ')</span>';
-      html += '</div>';
-      html += '<span class="zone-offset">' + diffText + '</span>';
-      html += '</div>';
-    }
-    elCompare.innerHTML = html;
   }
 
   function weatherIconByCode(code) {
@@ -108,19 +101,129 @@
     return { cls: 'icon-cloud', icon: 'fa-cloud' };
   }
 
-  function renderWeather(payload) {
+  function buildCardsData() {
+    var cards = [];
+    cards.push({
+      id: 'gt',
+      label: 'Guatemala',
+      city: 'Guatemala City',
+      iana: state.gtZone,
+      isBase: true,
+      weatherKey: null
+    });
+
+    for (var i = 0; i < state.usaZones.length; i++) {
+      var zone = state.usaZones[i];
+      cards.push({
+        id: 'usa-' + i,
+        label: zone.label,
+        city: zone.city,
+        iana: zone.iana,
+        isBase: false,
+        weatherKey: null
+      });
+    }
+
+    for (var c = 0; c < cards.length; c++) {
+      for (var w = 0; w < state.weatherLocations.length; w++) {
+        if (cards[c].iana === state.weatherLocations[w].timezone) {
+          cards[c].weatherKey = state.weatherLocations[w].key;
+          break;
+        }
+      }
+    }
+
+    state.cards = cards;
+  }
+
+  function buildCardsUI() {
+    var html = '';
+    for (var i = 0; i < state.cards.length; i++) {
+      var card = state.cards[i];
+      html += '<article class="zone-card" id="card-' + card.id + '">';
+      html += '<div class="zone-card-header">';
+      html += '<div>';
+      html += '<div class="zone-name">' + card.label + '</div>';
+      html += '<div class="zone-city">' + card.city + '</div>';
+      html += '</div>';
+      html += '<span class="zone-badge">' + (card.isBase ? 'Base GT' : 'USA') + '</span>';
+      html += '</div>';
+
+      html += '<div class="zone-time" id="time-' + card.id + '">--:--:--</div>';
+      html += '<div class="zone-date" id="date-' + card.id + '">Cargando fecha...</div>';
+      html += '<div class="zone-offset" id="offset-' + card.id + '">Calculando...</div>';
+
+      html += '<div class="weather-row">';
+      html += '<div class="weather-icon icon-cloud" id="icon-' + card.id + '"><i class="fa-solid fa-cloud"></i></div>';
+      html += '<div>';
+      html += '<div class="weather-main">';
+      html += '<span class="card-temp" id="temp-' + card.id + '">-- C</span>';
+      html += '<span class="card-weather-label" id="summary-' + card.id + '">Cargando clima...</span>';
+      html += '</div>';
+      html += '<div class="weather-meta" id="meta-' + card.id + '"></div>';
+      html += '</div>';
+      html += '</div>';
+      html += '</article>';
+    }
+    elCards.innerHTML = html;
+
+    for (var j = 0; j < state.cards.length; j++) {
+      var id = state.cards[j].id;
+      state.cardRefs[id] = {
+        time: document.getElementById('time-' + id),
+        date: document.getElementById('date-' + id),
+        offset: document.getElementById('offset-' + id),
+        icon: document.getElementById('icon-' + id),
+        temp: document.getElementById('temp-' + id),
+        summary: document.getElementById('summary-' + id),
+        meta: document.getElementById('meta-' + id)
+      };
+    }
+  }
+
+  function updateTimesOnly() {
+    var now = nowServerDate();
+    var gtOffset = zoneOffsetMinutes(now, state.gtZone);
+
+    for (var i = 0; i < state.cards.length; i++) {
+      var card = state.cards[i];
+      var ref = state.cardRefs[card.id];
+      var currentOffset = zoneOffsetMinutes(now, card.iana);
+
+      ref.time.textContent = formatTime(now, card.iana);
+      ref.date.textContent = formatDate(now, card.iana) + ' (' + card.iana + ')';
+      ref.offset.textContent = card.isBase ? 'Misma hora GT (referencia)' : prettyDiff(gtOffset, currentOffset);
+    }
+  }
+
+  function renderWeatherOnCard(cardId, payload) {
+    var ref = state.cardRefs[cardId];
+    if (!ref) {
+      return;
+    }
+
     var weather = payload.weather;
     var icon = weatherIconByCode(weather.weatherCode);
 
-    elWeatherIcon.className = 'weather-icon card-fade ' + icon.cls;
-    elWeatherIcon.innerHTML = '<i class="fa-solid ' + icon.icon + '"></i>';
+    ref.icon.className = 'weather-icon card-fade ' + icon.cls;
+    ref.icon.innerHTML = '<i class="fa-solid ' + icon.icon + '"></i>';
 
-    elWeatherTemp.textContent = weather.temperatureC + ' C';
-    elWeatherSummary.textContent = weather.weatherLabel;
-    elWeatherMeta.innerHTML =
-      '<span class="meta-pill">Max: ' + weather.highC + ' C</span>' +
-      '<span class="meta-pill">Min: ' + weather.lowC + ' C</span>' +
-      '<span class="meta-pill">Viento: ' + weather.windKmh + ' km/h</span>';
+    ref.temp.textContent = weather.temperatureC + ' C';
+    ref.summary.textContent = weather.weatherLabel;
+    ref.meta.innerHTML =
+      '<span class="meta-pill">Max ' + weather.highC + ' C</span>' +
+      '<span class="meta-pill">Min ' + weather.lowC + ' C</span>' +
+      '<span class="meta-pill">Viento ' + weather.windKmh + ' km/h</span>';
+  }
+
+  function renderWeatherError(cardId) {
+    var ref = state.cardRefs[cardId];
+    if (!ref) {
+      return;
+    }
+    ref.temp.textContent = '-- C';
+    ref.summary.textContent = 'Sin datos de clima';
+    ref.meta.innerHTML = '<span class="meta-pill">No disponible</span>';
   }
 
   function setSyncStatus(text) {
@@ -154,39 +257,47 @@
       state.weatherLocations = data.weatherLocations;
       elVersion.textContent = data.version;
 
-      var optionsHtml = '';
-      for (var i = 0; i < state.weatherLocations.length; i++) {
-        var location = state.weatherLocations[i];
-        optionsHtml += '<option value="' + location.key + '">' + location.label + '</option>';
-      }
-      elWeatherLocation.innerHTML = optionsHtml;
+      buildCardsData();
+      buildCardsUI();
+      updateTimesOnly();
     });
   }
 
-  function loadWeather(locationKey) {
-    return requestJson('backend/api/weather.php?location=' + encodeURIComponent(locationKey)).then(function (data) {
-      renderWeather(data);
-      elVersion.textContent = data.version;
-    }).catch(function () {
-      elWeatherSummary.textContent = 'No se pudo obtener el clima en este momento';
-      elWeatherMeta.innerHTML = '';
-    });
-  }
+  function refreshWeatherAllCards() {
+    var calls = [];
 
-  function attachEvents() {
-    elWeatherLocation.addEventListener('change', function () {
-      loadWeather(elWeatherLocation.value);
-    });
+    for (var i = 0; i < state.cards.length; i++) {
+      (function (card) {
+        if (!card.weatherKey) {
+          renderWeatherError(card.id);
+          return;
+        }
+
+        var p = requestJson('backend/api/weather.php?location=' + encodeURIComponent(card.weatherKey))
+          .then(function (data) {
+            renderWeatherOnCard(card.id, data);
+            elVersion.textContent = data.version;
+          })
+          .catch(function () {
+            renderWeatherError(card.id);
+          });
+        calls.push(p);
+      })(state.cards[i]);
+    }
+
+    return Promise.all(calls);
   }
 
   function boot() {
+    initTheme();
+
     loadConfig().then(function () {
       return syncTime();
     }).then(function () {
-      renderClockAndComparison();
-      setInterval(renderClockAndComparison, 1000);
-      attachEvents();
-      loadWeather(elWeatherLocation.value || 'gt-guatemala-city');
+      updateTimesOnly();
+      setInterval(updateTimesOnly, 1000);
+      refreshWeatherAllCards();
+      setInterval(refreshWeatherAllCards, 600000);
     }).catch(function (err) {
       setSyncStatus('Error de inicializacion');
       if (window.console && window.console.error) {
