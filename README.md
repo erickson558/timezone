@@ -18,6 +18,8 @@ Version actual: revisar archivo `VERSION`.
 - Mejora de contraste en circulos (iconos de clima y badges) para identificar rapido cada estado.
 - Correccion de cards sin clima: ahora todas consultan fuentes gratuitas con fallback para evitar "No disponible".
 - Iconos de clima mejorados (tamano, contraste, color y jerarquia visual) para evitar apariencia gris.
+- Cards restauradas a estilo uniforme (como versiones previas) con mejor legibilidad general.
+- Iconos de clima con fondo oscuro y colores de alto contraste por condicion.
 - Modo claro y modo oscuro persistente en navegador.
 - Arquitectura separada:
 - Frontend en `index.php` + `assets/css` + `assets/js`.

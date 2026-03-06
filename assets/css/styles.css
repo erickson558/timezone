@@ -146,18 +146,17 @@ html[data-theme='dark'] .zone-input {
 
 .zone-btn {
   border: 1px solid rgba(46, 113, 241, 0.45);
-  color: #8fb2ff;
   color: #a7c2ff;
   background: rgba(20, 53, 112, 0.55);
+  border-radius: 10px;
   padding: 8px 10px;
-  font-weight: 700;
   font-weight: 700;
   cursor: pointer;
 }
 
-  background: rgba(13, 94, 66, 0.72);
-  border-color: rgba(67, 226, 161, 0.55);
-  color: #9dffd7;
+.sync-row {
+  margin: 8px 0 16px;
+  color: var(--text-soft);
 }
 
 .cards-grid {
@@ -174,64 +173,36 @@ html[data-theme='dark'] .zone-input {
 
 .zone-card {
   border-radius: 20px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(88, 127, 196, 0.35);
   padding: 14px;
-  background: var(--glass);
-  box-shadow: 0 12px 24px rgba(17, 26, 39, 0.2);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: linear-gradient(165deg, rgba(38, 56, 90, 0.9), rgba(23, 35, 58, 0.92));
+  box-shadow: 0 14px 28px rgba(8, 15, 29, 0.45);
   display: flex;
   flex-direction: column;
   gap: 10px;
   animation: slideUp 360ms ease both;
 }
 
-.zone-card.weather-tone-clear {
-  background: linear-gradient(160deg, rgba(255, 211, 124, 0.48), rgba(255, 255, 255, 0.3));
+html[data-theme='light'] .zone-card {
+  border: 1px solid rgba(63, 100, 168, 0.22);
+  background: linear-gradient(165deg, rgba(234, 243, 255, 0.92), rgba(220, 234, 252, 0.92));
+  box-shadow: 0 10px 22px rgba(19, 36, 65, 0.18);
 }
 
-.zone-card.weather-tone-cloud {
-  background: linear-gradient(160deg, rgba(169, 188, 217, 0.4), rgba(255, 255, 255, 0.25));
-}
+.zone-card.weather-tone-clear { box-shadow: inset 0 0 0 1px rgba(255, 188, 78, 0.35), 0 14px 28px rgba(8, 15, 29, 0.45); }
+.zone-card.weather-tone-cloud { box-shadow: inset 0 0 0 1px rgba(156, 180, 214, 0.35), 0 14px 28px rgba(8, 15, 29, 0.45); }
+.zone-card.weather-tone-rain { box-shadow: inset 0 0 0 1px rgba(109, 169, 255, 0.4), 0 14px 28px rgba(8, 15, 29, 0.45); }
+.zone-card.weather-tone-storm { box-shadow: inset 0 0 0 1px rgba(255, 195, 88, 0.42), 0 14px 28px rgba(8, 15, 29, 0.45); }
+.zone-card.weather-tone-snow { box-shadow: inset 0 0 0 1px rgba(175, 219, 255, 0.45), 0 14px 28px rgba(8, 15, 29, 0.45); }
+.zone-card.weather-tone-fog { box-shadow: inset 0 0 0 1px rgba(181, 193, 214, 0.35), 0 14px 28px rgba(8, 15, 29, 0.45); }
 
-.zone-card.weather-tone-rain {
-  background: linear-gradient(160deg, rgba(98, 152, 255, 0.42), rgba(217, 236, 255, 0.25));
-}
-
-.zone-card.weather-tone-storm {
-  background: linear-gradient(160deg, rgba(67, 80, 106, 0.72), rgba(255, 191, 98, 0.22));
-}
-
-.zone-card.weather-tone-snow {
-  background: linear-gradient(160deg, rgba(196, 225, 255, 0.45), rgba(255, 255, 255, 0.36));
-}
-
-.zone-card.weather-tone-fog {
-  background: linear-gradient(160deg, rgba(200, 206, 218, 0.44), rgba(239, 243, 250, 0.28));
-}
-
-html[data-theme='dark'] .zone-card.weather-tone-clear {
-  background: linear-gradient(160deg, rgba(105, 82, 29, 0.62), rgba(22, 29, 40, 0.6));
-}
-
-html[data-theme='dark'] .zone-card.weather-tone-cloud {
-  background: linear-gradient(160deg, rgba(52, 67, 92, 0.72), rgba(23, 31, 45, 0.6));
-}
-
-html[data-theme='dark'] .zone-card.weather-tone-rain {
-  background: linear-gradient(160deg, rgba(31, 63, 120, 0.74), rgba(18, 28, 42, 0.62));
-}
-
-html[data-theme='dark'] .zone-card.weather-tone-storm {
-  background: linear-gradient(160deg, rgba(26, 33, 52, 0.82), rgba(99, 73, 18, 0.52));
-}
-
-html[data-theme='dark'] .zone-card.weather-tone-snow {
-  background: linear-gradient(160deg, rgba(48, 66, 87, 0.74), rgba(26, 34, 46, 0.62));
-}
-
-html[data-theme='dark'] .zone-card.weather-tone-fog {
-  background: linear-gradient(160deg, rgba(57, 67, 81, 0.76), rgba(26, 34, 46, 0.64));
+html[data-theme='light'] .zone-card.weather-tone-clear,
+html[data-theme='light'] .zone-card.weather-tone-cloud,
+html[data-theme='light'] .zone-card.weather-tone-rain,
+html[data-theme='light'] .zone-card.weather-tone-storm,
+html[data-theme='light'] .zone-card.weather-tone-snow,
+html[data-theme='light'] .zone-card.weather-tone-fog {
+  box-shadow: inset 0 0 0 1px rgba(62, 98, 162, 0.25), 0 10px 22px rgba(19, 36, 65, 0.18);
 }
 
 .zone-card-header {
@@ -288,11 +259,12 @@ html[data-theme='dark'] .zone-card.weather-tone-fog {
 
 .zone-name {
   font-weight: 700;
+  color: #f0f5ff;
 }
 
 .zone-city {
   margin-top: 2px;
-  color: var(--text-soft);
+  color: #afc2df;
   font-size: 0.86rem;
 }
 
@@ -301,6 +273,7 @@ html[data-theme='dark'] .zone-card.weather-tone-fog {
   font-size: 2rem;
   line-height: 1;
   letter-spacing: 0.02em;
+  color: #eef4ff;
 }
 
 .zone-offset {
@@ -315,14 +288,21 @@ html[data-theme='dark'] .zone-card.weather-tone-fog {
 
 .zone-date {
   font-size: 0.9rem;
-  color: var(--text-soft);
+  color: #b9cae4;
 }
 
 .zone-iana {
   font-size: 0.8rem;
-  color: var(--text-soft);
+  color: #9cb2d4;
   opacity: 0.9;
 }
+
+html[data-theme='light'] .zone-name,
+html[data-theme='light'] .zone-time { color: #203b66; }
+
+html[data-theme='light'] .zone-city,
+html[data-theme='light'] .zone-date,
+html[data-theme='light'] .zone-iana { color: #4a6490; }
 
 .weather-row {
   display: grid;
@@ -387,9 +367,9 @@ html[data-theme='dark'] .zone-card.weather-tone-fog {
   font-size: 1.85rem;
   position: relative;
   overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.75);
-  background: rgba(255, 255, 255, 0.85);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1), 0 6px 14px rgba(0, 0, 0, 0.25);
+  border: 2px solid rgba(255, 255, 255, 0.32);
+  background: radial-gradient(circle at 35% 28%, rgba(38, 53, 83, 0.95), rgba(13, 19, 33, 0.96));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05), 0 8px 18px rgba(0, 0, 0, 0.42);
 }
 
 .weather-icon::after {
@@ -404,7 +384,7 @@ html[data-theme='dark'] .zone-card.weather-tone-fog {
 }
 
 .weather-icon i {
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.55));
   position: relative;
   z-index: 2;
 }
@@ -415,7 +395,7 @@ html[data-theme='dark'] .zone-card.weather-tone-fog {
 }
 
 .icon-sun {
-  background: radial-gradient(circle at 28% 24%, rgba(255, 248, 193, 0.98), rgba(255, 176, 39, 0.78));
+  background: radial-gradient(circle at 28% 24%, rgba(63, 49, 18, 0.96), rgba(16, 20, 31, 0.98));
 }
 
 .icon-cloud i {
@@ -424,7 +404,7 @@ html[data-theme='dark'] .zone-card.weather-tone-fog {
 }
 
 .icon-cloud {
-  background: radial-gradient(circle at 32% 24%, rgba(245, 250, 255, 0.99), rgba(96, 130, 184, 0.9));
+  background: radial-gradient(circle at 32% 24%, rgba(48, 60, 86, 0.96), rgba(12, 19, 33, 0.98));
 }
 
 .icon-rain i {
@@ -433,7 +413,7 @@ html[data-theme='dark'] .zone-card.weather-tone-fog {
 }
 
 .icon-rain {
-  background: radial-gradient(circle at 30% 22%, rgba(227, 241, 255, 0.98), rgba(72, 128, 235, 0.84));
+  background: radial-gradient(circle at 30% 22%, rgba(39, 69, 118, 0.96), rgba(10, 19, 36, 0.98));
 }
 
 .icon-storm i {
@@ -442,7 +422,7 @@ html[data-theme='dark'] .zone-card.weather-tone-fog {
 }
 
 .icon-storm {
-  background: radial-gradient(circle at 30% 22%, rgba(210, 222, 246, 0.99), rgba(70, 80, 103, 0.84));
+  background: radial-gradient(circle at 30% 22%, rgba(58, 63, 84, 0.96), rgba(12, 16, 28, 0.98));
 }
 
 .icon-snow i {
@@ -451,7 +431,7 @@ html[data-theme='dark'] .zone-card.weather-tone-fog {
 }
 
 .icon-snow {
-  background: radial-gradient(circle at 30% 22%, rgba(251, 254, 255, 1), rgba(170, 206, 255, 0.84));
+  background: radial-gradient(circle at 30% 22%, rgba(44, 66, 101, 0.96), rgba(11, 18, 31, 0.98));
 }
 
 .icon-fog i {
@@ -460,7 +440,7 @@ html[data-theme='dark'] .zone-card.weather-tone-fog {
 }
 
 .icon-fog {
-  background: radial-gradient(circle at 30% 22%, rgba(252, 253, 255, 0.99), rgba(184, 192, 205, 0.82));
+  background: radial-gradient(circle at 30% 22%, rgba(60, 70, 88, 0.96), rgba(13, 18, 32, 0.98));
 }
 
 .temp {
@@ -495,6 +475,11 @@ html[data-theme='dark'] .meta-pill {
 html[data-theme='dark'] .weather-icon {
   border: 2px solid rgba(233, 242, 255, 0.7);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 8px 18px rgba(0, 0, 0, 0.45);
+}
+
+html[data-theme='light'] .weather-icon {
+  border: 2px solid rgba(22, 38, 67, 0.28);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07), 0 8px 16px rgba(21, 41, 76, 0.24);
 }
 
 html[data-theme='dark'] .card-weather-label {
