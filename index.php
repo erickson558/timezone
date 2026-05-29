@@ -1,3 +1,4 @@
+
 <?php
 @ini_set('display_errors', '0');
 @ini_set('default_charset', 'UTF-8');
@@ -91,7 +92,7 @@
           <div id="country-feedback" class="country-feedback" role="status" aria-live="polite"></div>
         </div>
         <div id="zone-cards" class="cards-grid"></div>
-        <p class="api-note">Clima y grados: Open-Meteo (gratis). Zonas: WorldTimeAPI (gratis, con respaldo local). Países: REST Countries API (gratis).</p>
+        <p class="api-note">Clima, zonas y paises: Open-Meteo (gratis). Lista de zonas: WorldTimeAPI (gratis, con respaldo local).</p>
       </section>
     </main>
   </div>

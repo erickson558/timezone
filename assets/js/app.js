@@ -947,14 +947,19 @@
     }
   }
 
+  function timezoneCity(iana) {
+    var parts = iana.split('/');
+    return parts[parts.length - 1].replace(/_/g, ' ');
+  }
+
   function addCustomCountry(input) {
     var query = String(input || '').trim();
     if (!query) {
-      showCountryFeedback('Escribe el nombre de un pais, ej: France, Germany, Japan', true);
+      showCountryFeedback('Escribe el nombre de un pais, ej: Ecuador, France, Japan', true);
       return;
     }
 
-    // Check duplicate before hitting the API
+    // Quick duplicate check before hitting any API
     for (var d = 0; d < state.customCountries.length; d++) {
       if (state.customCountries[d].name.toLowerCase() === query.toLowerCase()) {
         showCountryFeedback(state.customCountries[d].name + ' ya esta en tus cards.', true);
@@ -965,23 +970,31 @@
     setCountryBtnLoading(true);
     setSyncStatus('Buscando pais...');
 
-    var countriesUrl = 'https://restcountries.com/v3.1/name/' + encodeURIComponent(query) +
-                       '?fields=name,capital,flags,cca2,region';
+    // Use Open-Meteo geocoding — same API already used for weather (fast, reliable, no extra dependency)
+    var geoUrl = 'https://geocoding-api.open-meteo.com/v1/search?name=' +
+                 encodeURIComponent(query) + '&count=1&language=en&format=json';
 
-    requestJson(countriesUrl).then(function (results) {
-      if (!results || !results.length) {
-        throw new Error('Pais no encontrado: ' + query + '. Prueba en ingles, ej: Germany, France');
+    requestJson(geoUrl).then(function (geo) {
+      if (!geo.results || !geo.results.length) {
+        throw new Error('No se encontro "' + query + '". Prueba en ingles, ej: Ecuador, France, Japan');
       }
 
-      var country = results[0];
-      var capital = (country.capital && country.capital.length) ? country.capital[0] : query;
-      var cca2 = country.cca2 || 'XX';
-      var countryName = (country.name && country.name.common) ? country.name.common : query;
+      var loc = geo.results[0];
+
+      var cca2 = (loc.country_code || 'XX').toUpperCase();
+      var countryName = loc.country || loc.name || query;
+      // Use timezone city as the location label (e.g. "America/Guayaquil" → "Guayaquil")
+      var iana = loc.timezone || '';
+      var cityLabel = iana ? timezoneCity(iana) : (loc.name || query);
       var flag = countryFlagEmoji(cca2);
 
-      // Reject duplicates by cca2
-      for (var i = 0; i < state.customCountries.length; i++) {
-        if (state.customCountries[i].cca2 === cca2) {
+      if (!iana || !isValidTimezone(iana)) {
+        throw new Error('Zona horaria no disponible para "' + countryName + '"');
+      }
+
+      // Reject duplicate by cca2
+      for (var j = 0; j < state.customCountries.length; j++) {
+        if (state.customCountries[j].cca2 === cca2) {
           setCountryBtnLoading(false);
           setSyncStatus('Sincronizado');
           showCountryFeedback(countryName + ' ya esta en tus cards.', true);
@@ -989,44 +1002,28 @@
         }
       }
 
-      var geoUrl = 'https://geocoding-api.open-meteo.com/v1/search?name=' +
-                   encodeURIComponent(capital) + '&count=1&language=en&format=json';
+      var countryData = {
+        name: countryName,
+        capital: cityLabel,
+        iana: iana,
+        lat: loc.latitude,
+        lon: loc.longitude,
+        flag: flag,
+        cca2: cca2,
+        region: loc.admin1 || ''
+      };
 
-      return requestJson(geoUrl).then(function (geo) {
-        if (!geo.results || !geo.results.length) {
-          throw new Error('No se encontraron coordenadas para ' + capital);
-        }
-
-        var loc = geo.results[0];
-        var iana = loc.timezone || '';
-
-        if (!iana || !isValidTimezone(iana)) {
-          throw new Error('Zona horaria no valida para ' + capital);
-        }
-
-        var countryData = {
-          name: countryName,
-          capital: capital,
-          iana: iana,
-          lat: loc.latitude,
-          lon: loc.longitude,
-          flag: flag,
-          cca2: cca2,
-          region: country.region || ''
-        };
-
-        state.customCountries.push(countryData);
-        saveCustomCountries();
-        elCountryInput.value = '';
-        setCountryBtnLoading(false);
-        setSyncStatus('Sincronizado');
-        showCountryFeedback(flag + ' ' + countryName + ' (' + capital + ') agregado!', false);
-        redrawCards();
-      });
+      state.customCountries.push(countryData);
+      saveCustomCountries();
+      elCountryInput.value = '';
+      setCountryBtnLoading(false);
+      setSyncStatus('Sincronizado');
+      showCountryFeedback(flag + ' ' + countryName + ' agregado!', false);
+      redrawCards();
     }).catch(function (err) {
       setCountryBtnLoading(false);
       setSyncStatus('Sincronizado');
-      var msg = err && err.message ? err.message : 'Error de red. Verifica tu conexion.';
+      var msg = err && err.message ? err.message : 'Error de red. Verifica tu conexion a internet.';
       showCountryFeedback(msg, true);
       if (window.console) console.error('[addCustomCountry]', err);
     });
