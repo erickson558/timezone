@@ -10,6 +10,9 @@
   var elZoneInput = document.getElementById('zone-input');
   var elAddZoneBtn = document.getElementById('add-zone-btn');
   var elSuggestions = document.getElementById('timezone-suggestions');
+  var elCountryInput = document.getElementById('country-input');
+  var elAddCountryBtn = document.getElementById('add-country-btn');
+  var elCountryFeedback = document.getElementById('country-feedback');
 
   var state = {
     driftMs: 0,
@@ -19,6 +22,7 @@
     locationByTimezone: {},
     geoCacheByTimezone: {},
     customZones: [],
+    customCountries: [],
     timezoneSuggestions: [],
     cardOrder: [],
     cards: [],
@@ -26,6 +30,7 @@
   };
 
   var CUSTOM_ZONES_KEY = 'timezone-custom-zones-v1';
+  var CUSTOM_COUNTRIES_KEY = 'timezone-custom-countries-v1';
   var CARD_ORDER_KEY = 'timezone-card-order-v1';
   var THEME_KEY = 'theme-preference-v2';
   var draggingOrderKey = null;
@@ -37,6 +42,8 @@
     { id: 'ice-mineral', name: 'Ice Mineral' },
     { id: 'graphite-pop', name: 'Graphite Pop' }
   ];
+
+  // ─── Time helpers ─────────────────────────────────────────────────────────
 
   function nowServerDate() {
     return new Date(Date.now() + state.driftMs);
@@ -75,6 +82,8 @@
     }
     return 'UTC';
   }
+
+  // ─── Theme helpers ─────────────────────────────────────────────────────────
 
   function normalizeTheme(theme) {
     if (theme === 'dark' || theme === 'midnight' || theme === 'vista') {
@@ -119,71 +128,6 @@
     return THEMES[0].id;
   }
 
-  function isValidTimezone(tz) {
-    try {
-      Intl.DateTimeFormat('en-US', { timeZone: tz }).format(new Date());
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  function normalizeTimezoneInput(value) {
-    return String(value || '').trim();
-  }
-
-  function loadCustomZones() {
-    var raw = localStorage.getItem(CUSTOM_ZONES_KEY);
-    if (!raw) {
-      state.customZones = [];
-      return;
-    }
-
-    try {
-      var list = JSON.parse(raw);
-      var out = [];
-      if (Object.prototype.toString.call(list) === '[object Array]') {
-        for (var i = 0; i < list.length; i++) {
-          var tz = normalizeTimezoneInput(list[i]);
-          if (tz !== '' && isValidTimezone(tz) && out.indexOf(tz) < 0) {
-            out.push(tz);
-          }
-        }
-      }
-      state.customZones = out;
-    } catch (e) {
-      state.customZones = [];
-    }
-  }
-
-  function loadCardOrder() {
-    var raw = localStorage.getItem(CARD_ORDER_KEY);
-    if (!raw) {
-      state.cardOrder = [];
-      return;
-    }
-
-    try {
-      var arr = JSON.parse(raw);
-      if (Object.prototype.toString.call(arr) === '[object Array]') {
-        state.cardOrder = arr;
-      } else {
-        state.cardOrder = [];
-      }
-    } catch (e) {
-      state.cardOrder = [];
-    }
-  }
-
-  function saveCardOrder(orderKeys) {
-    localStorage.setItem(CARD_ORDER_KEY, JSON.stringify(orderKeys));
-    state.cardOrder = orderKeys;
-  }
-
-  function saveCustomZones() {
-    localStorage.setItem(CUSTOM_ZONES_KEY, JSON.stringify(state.customZones));
-  }
-
   function applyTheme(theme) {
     var finalTheme = normalizeTheme(theme);
     document.documentElement.setAttribute('data-theme', finalTheme);
@@ -211,6 +155,21 @@
     });
   }
 
+  // ─── Timezone / zone helpers ───────────────────────────────────────────────
+
+  function isValidTimezone(tz) {
+    try {
+      Intl.DateTimeFormat('en-US', { timeZone: tz }).format(new Date());
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function normalizeTimezoneInput(value) {
+    return String(value || '').trim();
+  }
+
   function zoneOffsetMinutes(date, zone) {
     var zoneDateString = date.toLocaleString('en-US', { timeZone: zone });
     var zoneDate = new Date(zoneDateString);
@@ -227,6 +186,32 @@
     }
     return 'GT ' + diffHours + 'h';
   }
+
+  function prettyZoneName(tz) {
+    var parts = tz.split('/');
+    var city = parts[parts.length - 1].replace(/_/g, ' ');
+    var region = parts[0] || 'Custom';
+    return {
+      city: city,
+      region: region
+    };
+  }
+
+  // ─── Country helpers ───────────────────────────────────────────────────────
+
+  function countryFlagEmoji(cca2) {
+    if (!cca2 || cca2.length !== 2) return '🌍';
+    if (typeof String.fromCodePoint !== 'function') return cca2.toUpperCase();
+    try {
+      var chars = cca2.toUpperCase().split('');
+      return String.fromCodePoint(chars[0].charCodeAt(0) + 127397) +
+             String.fromCodePoint(chars[1].charCodeAt(0) + 127397);
+    } catch (e) {
+      return cca2.toUpperCase();
+    }
+  }
+
+  // ─── Weather helpers ───────────────────────────────────────────────────────
 
   function weatherIconByCode(code) {
     if (code === 0 || code === 1) {
@@ -297,31 +282,101 @@
     return 'weather-tone-cloud';
   }
 
-  function weatherRequestForCard(card) {
-    return card;
+  // ─── localStorage ──────────────────────────────────────────────────────────
+
+  function loadCustomZones() {
+    var raw = localStorage.getItem(CUSTOM_ZONES_KEY);
+    if (!raw) {
+      state.customZones = [];
+      return;
+    }
+
+    try {
+      var list = JSON.parse(raw);
+      var out = [];
+      if (Object.prototype.toString.call(list) === '[object Array]') {
+        for (var i = 0; i < list.length; i++) {
+          var tz = normalizeTimezoneInput(list[i]);
+          if (tz !== '' && isValidTimezone(tz) && out.indexOf(tz) < 0) {
+            out.push(tz);
+          }
+        }
+      }
+      state.customZones = out;
+    } catch (e) {
+      state.customZones = [];
+    }
   }
 
-  function prettyZoneName(tz) {
-    var parts = tz.split('/');
-    var city = parts[parts.length - 1].replace(/_/g, ' ');
-    var region = parts[0] || 'Custom';
-    return {
-      city: city,
-      region: region
-    };
+  function saveCustomZones() {
+    localStorage.setItem(CUSTOM_ZONES_KEY, JSON.stringify(state.customZones));
   }
+
+  function loadCustomCountries() {
+    var raw = localStorage.getItem(CUSTOM_COUNTRIES_KEY);
+    if (!raw) {
+      state.customCountries = [];
+      return;
+    }
+    try {
+      var list = JSON.parse(raw);
+      if (Object.prototype.toString.call(list) === '[object Array]') {
+        state.customCountries = list.filter(function (c) {
+          return c && c.name && c.capital && c.iana && c.cca2 &&
+                 typeof c.lat === 'number' && typeof c.lon === 'number' &&
+                 isValidTimezone(c.iana);
+        });
+      } else {
+        state.customCountries = [];
+      }
+    } catch (e) {
+      state.customCountries = [];
+    }
+  }
+
+  function saveCustomCountries() {
+    localStorage.setItem(CUSTOM_COUNTRIES_KEY, JSON.stringify(state.customCountries));
+  }
+
+  function loadCardOrder() {
+    var raw = localStorage.getItem(CARD_ORDER_KEY);
+    if (!raw) {
+      state.cardOrder = [];
+      return;
+    }
+
+    try {
+      var arr = JSON.parse(raw);
+      if (Object.prototype.toString.call(arr) === '[object Array]') {
+        state.cardOrder = arr;
+      } else {
+        state.cardOrder = [];
+      }
+    } catch (e) {
+      state.cardOrder = [];
+    }
+  }
+
+  function saveCardOrder(orderKeys) {
+    localStorage.setItem(CARD_ORDER_KEY, JSON.stringify(orderKeys));
+    state.cardOrder = orderKeys;
+  }
+
+  // ─── Cards data ────────────────────────────────────────────────────────────
 
   function buildCardsData() {
     var cards = [];
+
     cards.push({
       id: 'gt',
       label: 'Guatemala',
       city: 'Guatemala City',
       iana: state.gtZone,
-        orderKey: '__GT__',
+      orderKey: '__GT__',
       isBase: true,
       weatherKey: null,
-      isCustom: false
+      isCustom: false,
+      isCountry: false
     });
 
     for (var i = 0; i < state.usaZones.length; i++) {
@@ -334,7 +389,8 @@
         orderKey: zone.iana,
         isBase: false,
         weatherKey: null,
-        isCustom: false
+        isCustom: false,
+        isCountry: false
       });
     }
 
@@ -349,7 +405,24 @@
         orderKey: customTz,
         isBase: false,
         weatherKey: null,
-        isCustom: true
+        isCustom: true,
+        isCountry: false
+      });
+    }
+
+    for (var p = 0; p < state.customCountries.length; p++) {
+      var country = state.customCountries[p];
+      cards.push({
+        id: 'country-' + p,
+        label: country.flag + ' ' + country.name,
+        city: country.capital,
+        iana: country.iana,
+        orderKey: 'country-' + country.cca2,
+        isBase: false,
+        weatherKey: null,
+        isCustom: false,
+        isCountry: true,
+        countryData: country
       });
     }
 
@@ -387,10 +460,21 @@
     state.cards = cards;
   }
 
+  // ─── Cards UI ──────────────────────────────────────────────────────────────
+
+  function cardBadgeLabel(card) {
+    if (card.isBase) return 'Base GT';
+    if (card.isCountry) return 'País';
+    if (card.isCustom) return 'Extra';
+    return 'USA';
+  }
+
   function buildCardsUI() {
     var html = '';
     for (var i = 0; i < state.cards.length; i++) {
       var card = state.cards[i];
+      var badgeExtra = card.isCountry ? ' zone-badge-country' : '';
+
       html += '<article class="zone-card" id="card-' + card.id + '" draggable="true" data-order-key="' + card.orderKey + '">';
       html += '<div class="zone-card-header">';
       html += '<div>';
@@ -398,12 +482,15 @@
       html += '<div class="zone-city">' + card.city + '</div>';
       html += '</div>';
       html += '<div class="zone-header-actions">';
-      html += '<span class="zone-badge">' + (card.isBase ? 'Base GT' : (card.isCustom ? 'Extra' : 'USA')) + '</span>';
+      html += '<span class="zone-badge' + badgeExtra + '">' + cardBadgeLabel(card) + '</span>';
       html += '<span class="zone-badge zone-abbr" id="abbr-' + card.id + '">--</span>';
       html += '<button class="zone-order-btn" type="button" data-move-up="' + card.orderKey + '" aria-label="Subir card"><i class="fa-solid fa-arrow-up"></i></button>';
       html += '<button class="zone-order-btn" type="button" data-move-down="' + card.orderKey + '" aria-label="Bajar card"><i class="fa-solid fa-arrow-down"></i></button>';
       if (card.isCustom) {
         html += '<button class="zone-remove-btn" type="button" data-remove-zone="' + card.iana + '" aria-label="Eliminar zona">x</button>';
+      }
+      if (card.isCountry) {
+        html += '<button class="zone-remove-btn" type="button" data-remove-country="' + card.countryData.cca2 + '" aria-label="Eliminar país">x</button>';
       }
       html += '</div>';
       html += '</div>';
@@ -448,19 +535,32 @@
     }
 
     bindRemoveZoneButtons();
+    bindRemoveCountryButtons();
     bindOrderButtons();
     bindCardDragAndDrop();
   }
+
+  // ─── Remove buttons ────────────────────────────────────────────────────────
 
   function bindRemoveZoneButtons() {
     var buttons = elCards.querySelectorAll('[data-remove-zone]');
     for (var i = 0; i < buttons.length; i++) {
       buttons[i].addEventListener('click', function () {
-        var zone = this.getAttribute('data-remove-zone');
-        removeCustomZone(zone);
+        removeCustomZone(this.getAttribute('data-remove-zone'));
       });
     }
   }
+
+  function bindRemoveCountryButtons() {
+    var buttons = elCards.querySelectorAll('[data-remove-country]');
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].addEventListener('click', function () {
+        removeCustomCountry(this.getAttribute('data-remove-country'));
+      });
+    }
+  }
+
+  // ─── Order / drag-and-drop ─────────────────────────────────────────────────
 
   function getCurrentOrderKeysFromState() {
     var keys = [];
@@ -579,6 +679,8 @@
     }
   }
 
+  // ─── Time updates ──────────────────────────────────────────────────────────
+
   function updateTimesOnly() {
     var now = nowServerDate();
     var gtOffset = zoneOffsetMinutes(now, state.gtZone);
@@ -596,6 +698,8 @@
       ref.offset.textContent = card.isBase ? 'Misma hora GT (referencia)' : prettyDiff(gtOffset, currentOffset);
     }
   }
+
+  // ─── Weather rendering ─────────────────────────────────────────────────────
 
   function renderWeatherOnCard(cardId, payload) {
     var ref = state.cardRefs[cardId];
@@ -653,7 +757,18 @@
     return value;
   }
 
+  // ─── Weather fetch ─────────────────────────────────────────────────────────
+
   function getCoordsForCard(card) {
+    // Country cards carry pre-resolved coordinates from the add flow
+    if (card.isCountry && card.countryData) {
+      return Promise.resolve({
+        lat: card.countryData.lat,
+        lon: card.countryData.lon,
+        label: card.countryData.capital
+      });
+    }
+
     if (state.locationByTimezone[card.iana]) {
       return Promise.resolve(state.locationByTimezone[card.iana]);
     }
@@ -711,6 +826,8 @@
     });
   }
 
+  // ─── Network ───────────────────────────────────────────────────────────────
+
   function setSyncStatus(text) {
     elSync.textContent = text;
   }
@@ -742,15 +859,15 @@
       state.weatherLocations = data.weatherLocations;
       elVersion.textContent = data.version;
 
-       state.locationByTimezone = {};
-       for (var i = 0; i < state.weatherLocations.length; i++) {
-         var loc = state.weatherLocations[i];
-         state.locationByTimezone[loc.timezone] = {
-           lat: loc.lat,
-           lon: loc.lon,
-           label: loc.label
-         };
-       }
+      state.locationByTimezone = {};
+      for (var i = 0; i < state.weatherLocations.length; i++) {
+        var loc = state.weatherLocations[i];
+        state.locationByTimezone[loc.timezone] = {
+          lat: loc.lat,
+          lon: loc.lon,
+          label: loc.label
+        };
+      }
 
       buildCardsData();
       buildCardsUI();
@@ -758,13 +875,7 @@
     });
   }
 
-  function redrawCards() {
-    state.cardRefs = {};
-    buildCardsData();
-    buildCardsUI();
-    updateTimesOnly();
-    refreshWeatherAllCards();
-  }
+  // ─── Add / remove zones ────────────────────────────────────────────────────
 
   function addCustomZone(zone) {
     var tz = normalizeTimezoneInput(zone);
@@ -810,6 +921,141 @@
     redrawCards();
   }
 
+  // ─── Add / remove countries ────────────────────────────────────────────────
+
+  var _countryFeedbackTimer = null;
+
+  function showCountryFeedback(msg, isError) {
+    if (!elCountryFeedback) return;
+    elCountryFeedback.textContent = msg;
+    elCountryFeedback.className = 'country-feedback ' + (isError ? 'country-feedback-error' : 'country-feedback-ok');
+    if (_countryFeedbackTimer) clearTimeout(_countryFeedbackTimer);
+    _countryFeedbackTimer = setTimeout(function () {
+      elCountryFeedback.textContent = '';
+      elCountryFeedback.className = 'country-feedback';
+    }, 4000);
+  }
+
+  function setCountryBtnLoading(loading) {
+    if (!elAddCountryBtn) return;
+    if (loading) {
+      elAddCountryBtn.disabled = true;
+      elAddCountryBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Buscando...';
+    } else {
+      elAddCountryBtn.disabled = false;
+      elAddCountryBtn.innerHTML = '<i class="fa-solid fa-flag"></i> Agregar país';
+    }
+  }
+
+  function addCustomCountry(input) {
+    var query = String(input || '').trim();
+    if (!query) {
+      showCountryFeedback('Escribe el nombre de un pais, ej: France, Germany, Japan', true);
+      return;
+    }
+
+    // Check duplicate before hitting the API
+    for (var d = 0; d < state.customCountries.length; d++) {
+      if (state.customCountries[d].name.toLowerCase() === query.toLowerCase()) {
+        showCountryFeedback(state.customCountries[d].name + ' ya esta en tus cards.', true);
+        return;
+      }
+    }
+
+    setCountryBtnLoading(true);
+    setSyncStatus('Buscando pais...');
+
+    var countriesUrl = 'https://restcountries.com/v3.1/name/' + encodeURIComponent(query) +
+                       '?fields=name,capital,flags,cca2,region';
+
+    requestJson(countriesUrl).then(function (results) {
+      if (!results || !results.length) {
+        throw new Error('Pais no encontrado: ' + query + '. Prueba en ingles, ej: Germany, France');
+      }
+
+      var country = results[0];
+      var capital = (country.capital && country.capital.length) ? country.capital[0] : query;
+      var cca2 = country.cca2 || 'XX';
+      var countryName = (country.name && country.name.common) ? country.name.common : query;
+      var flag = countryFlagEmoji(cca2);
+
+      // Reject duplicates by cca2
+      for (var i = 0; i < state.customCountries.length; i++) {
+        if (state.customCountries[i].cca2 === cca2) {
+          setCountryBtnLoading(false);
+          setSyncStatus('Sincronizado');
+          showCountryFeedback(countryName + ' ya esta en tus cards.', true);
+          return;
+        }
+      }
+
+      var geoUrl = 'https://geocoding-api.open-meteo.com/v1/search?name=' +
+                   encodeURIComponent(capital) + '&count=1&language=en&format=json';
+
+      return requestJson(geoUrl).then(function (geo) {
+        if (!geo.results || !geo.results.length) {
+          throw new Error('No se encontraron coordenadas para ' + capital);
+        }
+
+        var loc = geo.results[0];
+        var iana = loc.timezone || '';
+
+        if (!iana || !isValidTimezone(iana)) {
+          throw new Error('Zona horaria no valida para ' + capital);
+        }
+
+        var countryData = {
+          name: countryName,
+          capital: capital,
+          iana: iana,
+          lat: loc.latitude,
+          lon: loc.longitude,
+          flag: flag,
+          cca2: cca2,
+          region: country.region || ''
+        };
+
+        state.customCountries.push(countryData);
+        saveCustomCountries();
+        elCountryInput.value = '';
+        setCountryBtnLoading(false);
+        setSyncStatus('Sincronizado');
+        showCountryFeedback(flag + ' ' + countryName + ' (' + capital + ') agregado!', false);
+        redrawCards();
+      });
+    }).catch(function (err) {
+      setCountryBtnLoading(false);
+      setSyncStatus('Sincronizado');
+      var msg = err && err.message ? err.message : 'Error de red. Verifica tu conexion.';
+      showCountryFeedback(msg, true);
+      if (window.console) console.error('[addCustomCountry]', err);
+    });
+  }
+
+  function removeCustomCountry(cca2) {
+    var next = [];
+    for (var i = 0; i < state.customCountries.length; i++) {
+      if (state.customCountries[i].cca2 !== cca2) {
+        next.push(state.customCountries[i]);
+      }
+    }
+    state.customCountries = next;
+    saveCustomCountries();
+    redrawCards();
+  }
+
+  // ─── Redraw ────────────────────────────────────────────────────────────────
+
+  function redrawCards() {
+    state.cardRefs = {};
+    buildCardsData();
+    buildCardsUI();
+    updateTimesOnly();
+    refreshWeatherAllCards();
+  }
+
+  // ─── Timezone suggestions ──────────────────────────────────────────────────
+
   function fallbackTimezoneSuggestions() {
     if (typeof Intl.supportedValuesOf === 'function') {
       try {
@@ -848,12 +1094,14 @@
     });
   }
 
+  // ─── Weather refresh all cards ─────────────────────────────────────────────
+
   function refreshWeatherAllCards() {
     var calls = [];
 
     for (var i = 0; i < state.cards.length; i++) {
       (function (card) {
-        var p = fetchWeatherClientSide(weatherRequestForCard(card))
+        var p = fetchWeatherClientSide(card)
           .then(function (data) {
             renderWeatherOnCard(card.id, data);
           })
@@ -867,9 +1115,12 @@
     return Promise.all(calls);
   }
 
+  // ─── Boot ──────────────────────────────────────────────────────────────────
+
   function boot() {
     initTheme();
     loadCustomZones();
+    loadCustomCountries();
     loadCardOrder();
 
     elAddZoneBtn.addEventListener('click', function () {
@@ -882,6 +1133,21 @@
         addCustomZone(elZoneInput.value);
       }
     });
+
+    if (elAddCountryBtn) {
+      elAddCountryBtn.addEventListener('click', function () {
+        addCustomCountry(elCountryInput.value);
+      });
+    }
+
+    if (elCountryInput) {
+      elCountryInput.addEventListener('keydown', function (evt) {
+        if (evt.key === 'Enter') {
+          evt.preventDefault();
+          addCustomCountry(elCountryInput.value);
+        }
+      });
+    }
 
     loadConfig().then(function () {
       return loadTimezoneSuggestions();

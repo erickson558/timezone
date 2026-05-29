@@ -357,9 +357,60 @@ html[data-theme='neon-grid'] .theme-select option {
   cursor: pointer;
 }
 
+.zone-btn-country {
+  border-color: rgba(100, 220, 150, 0.5);
+  background: rgba(60, 180, 110, 0.18);
+  color: #c0ffd8;
+}
+
+html[data-theme='ice-mineral'] .zone-btn-country {
+  border-color: rgba(30, 130, 80, 0.45);
+  background: rgba(30, 130, 80, 0.12);
+  color: #1a5c3a;
+}
+
+.controls-sep {
+  display: inline-block;
+  width: 1px;
+  height: 28px;
+  background: var(--line);
+  align-self: center;
+  margin: 0 2px;
+}
+
+@media (max-width: 740px) {
+  .controls-sep {
+    display: none;
+  }
+}
+
 .sync-row {
   margin: 8px 0 16px;
   color: var(--text-soft);
+}
+
+.country-feedback {
+  min-height: 20px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  padding: 4px 2px 0;
+  transition: opacity 200ms ease;
+}
+
+.country-feedback-ok {
+  color: #7dffc0;
+}
+
+.country-feedback-error {
+  color: #ff9b9b;
+}
+
+html[data-theme='ice-mineral'] .country-feedback-ok {
+  color: #1a6a45;
+}
+
+html[data-theme='ice-mineral'] .country-feedback-error {
+  color: #a02020;
 }
 
 .cards-grid {
@@ -482,6 +533,18 @@ html[data-theme='ice-mineral'] .zone-abbr {
   background: rgba(49, 145, 112, 0.15);
   border-color: rgba(49, 145, 112, 0.38);
   color: #1f735a;
+}
+
+.zone-badge-country {
+  background: rgba(60, 200, 120, 0.22);
+  border-color: rgba(80, 255, 140, 0.45);
+  color: #b8ffd0;
+}
+
+html[data-theme='ice-mineral'] .zone-badge-country {
+  background: rgba(30, 130, 80, 0.15);
+  border-color: rgba(30, 130, 80, 0.4);
+  color: #1a5c38;
 }
 
 .zone-name {

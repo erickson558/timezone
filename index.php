@@ -56,17 +56,46 @@
         <div class="controls-bar">
           <h2 class="section-title">Cards de zonas horarias y clima</h2>
           <div class="zone-controls">
-            <input id="zone-input" class="zone-input" list="timezone-suggestions" placeholder="Agregar zona IANA (ej: Europe/Madrid)">
+            <input id="zone-input" class="zone-input" list="timezone-suggestions" placeholder="Zona IANA (ej: Europe/Madrid)">
             <datalist id="timezone-suggestions"></datalist>
             <button id="add-zone-btn" class="zone-btn" type="button"><i class="fa-solid fa-plus"></i> Agregar zona</button>
+            <span class="controls-sep" aria-hidden="true"></span>
+            <input id="country-input" class="zone-input" list="country-suggestions" placeholder="País (ej: Francia, Japan, Alemania)">
+            <datalist id="country-suggestions">
+              <option value="Afghanistan"><option value="Albania"><option value="Algeria">
+              <option value="Argentina"><option value="Australia"><option value="Austria">
+              <option value="Belgium"><option value="Bolivia"><option value="Brazil">
+              <option value="Canada"><option value="Chile"><option value="China">
+              <option value="Colombia"><option value="Croatia"><option value="Cuba">
+              <option value="Czech Republic"><option value="Denmark"><option value="Ecuador">
+              <option value="Egypt"><option value="Ethiopia"><option value="Finland">
+              <option value="France"><option value="Germany"><option value="Greece">
+              <option value="Guatemala"><option value="Honduras"><option value="Hungary">
+              <option value="India"><option value="Indonesia"><option value="Iran">
+              <option value="Iraq"><option value="Ireland"><option value="Israel">
+              <option value="Italy"><option value="Japan"><option value="Jordan">
+              <option value="Kenya"><option value="Malaysia"><option value="Mexico">
+              <option value="Morocco"><option value="Netherlands"><option value="New Zealand">
+              <option value="Nicaragua"><option value="Nigeria"><option value="Norway">
+              <option value="Pakistan"><option value="Panama"><option value="Paraguay">
+              <option value="Peru"><option value="Philippines"><option value="Poland">
+              <option value="Portugal"><option value="Romania"><option value="Russia">
+              <option value="Saudi Arabia"><option value="Singapore"><option value="South Africa">
+              <option value="South Korea"><option value="Spain"><option value="Sweden">
+              <option value="Switzerland"><option value="Thailand"><option value="Turkey">
+              <option value="Ukraine"><option value="United Kingdom"><option value="United States">
+              <option value="Uruguay"><option value="Venezuela"><option value="Vietnam">
+            </datalist>
+            <button id="add-country-btn" class="zone-btn zone-btn-country" type="button"><i class="fa-solid fa-flag"></i> Agregar país</button>
           </div>
+          <div id="country-feedback" class="country-feedback" role="status" aria-live="polite"></div>
         </div>
         <div id="zone-cards" class="cards-grid"></div>
-        <p class="api-note">Clima y grados: Open-Meteo (gratis). Lista de zonas: WorldTimeAPI (gratis, con respaldo local).</p>
+        <p class="api-note">Clima y grados: Open-Meteo (gratis). Zonas: WorldTimeAPI (gratis, con respaldo local). Países: REST Countries API (gratis).</p>
       </section>
     </main>
   </div>
 
-  <script src="assets/js/app.js"></script>
+  <script src="assets/js/app.js?v=<?php echo filemtime(__DIR__ . '/assets/js/app.js'); ?>"></script>
 </body>
 </html>
