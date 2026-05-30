@@ -43,6 +43,102 @@
     { id: 'graphite-pop', name: 'Graphite Pop' }
   ];
 
+  // Static IANA timezone → ISO 3166-1 alpha-2 lookup (~130 entries)
+  // For anything not here, flagForTimezone() falls back to the geocache.
+  var TIMEZONE_COUNTRY = {
+    // Central America
+    'America/Guatemala':'GT','America/Belize':'BZ','America/Costa_Rica':'CR',
+    'America/El_Salvador':'SV','America/Tegucigalpa':'HN','America/Managua':'NI',
+    'America/Panama':'PA',
+    // North America — USA
+    'America/New_York':'US','America/Chicago':'US','America/Denver':'US',
+    'America/Los_Angeles':'US','America/Anchorage':'US','Pacific/Honolulu':'US',
+    'America/Phoenix':'US','America/Detroit':'US','America/Indiana/Indianapolis':'US',
+    'America/Kentucky/Louisville':'US','America/North_Dakota/Center':'US',
+    // North America — Canada
+    'America/Toronto':'CA','America/Vancouver':'CA','America/Montreal':'CA',
+    'America/Winnipeg':'CA','America/Halifax':'CA','America/St_Johns':'CA',
+    'America/Edmonton':'CA','America/Regina':'CA',
+    // North America — Mexico
+    'America/Mexico_City':'MX','America/Cancun':'MX','America/Monterrey':'MX',
+    'America/Tijuana':'MX','America/Chihuahua':'MX','America/Hermosillo':'MX',
+    // Caribbean
+    'America/Havana':'CU','America/Jamaica':'JM','America/Port-au-Prince':'HT',
+    'America/Santo_Domingo':'DO','America/Puerto_Rico':'PR','America/Nassau':'BS',
+    // South America
+    'America/Bogota':'CO','America/Lima':'PE','America/Santiago':'CL',
+    'America/Argentina/Buenos_Aires':'AR','America/Buenos_Aires':'AR',
+    'America/Sao_Paulo':'BR','America/Manaus':'BR','America/Belem':'BR',
+    'America/Fortaleza':'BR','America/Recife':'BR','America/Bahia':'BR',
+    'America/Caracas':'VE','America/Guayaquil':'EC',
+    'America/La_Paz':'BO','America/Asuncion':'PY','America/Montevideo':'UY',
+    'America/Guyana':'GY','America/Suriname':'SR','America/Cayenne':'GF',
+    // Europe
+    'Europe/London':'GB','Europe/Dublin':'IE','Europe/Paris':'FR',
+    'Europe/Berlin':'DE','Europe/Madrid':'ES','Europe/Rome':'IT',
+    'Europe/Amsterdam':'NL','Europe/Brussels':'BE','Europe/Zurich':'CH',
+    'Europe/Vienna':'AT','Europe/Warsaw':'PL','Europe/Prague':'CZ',
+    'Europe/Budapest':'HU','Europe/Bucharest':'RO','Europe/Stockholm':'SE',
+    'Europe/Oslo':'NO','Europe/Helsinki':'FI','Europe/Copenhagen':'DK',
+    'Europe/Lisbon':'PT','Europe/Athens':'GR','Europe/Kiev':'UA',
+    'Europe/Kyiv':'UA','Europe/Moscow':'RU','Europe/Kaliningrad':'RU',
+    'Europe/Samara':'RU','Europe/Istanbul':'TR','Europe/Minsk':'BY',
+    'Europe/Sofia':'BG','Europe/Bratislava':'SK','Europe/Ljubljana':'SI',
+    'Europe/Zagreb':'HR','Europe/Sarajevo':'BA','Europe/Belgrade':'RS',
+    'Europe/Podgorica':'ME','Europe/Tirane':'AL','Europe/Skopje':'MK',
+    'Europe/Chisinau':'MD','Europe/Riga':'LV','Europe/Tallinn':'EE',
+    'Europe/Vilnius':'LT','Europe/Luxembourg':'LU','Europe/Monaco':'MC',
+    'Europe/Malta':'MT','Europe/Nicosia':'CY',
+    'Atlantic/Reykjavik':'IS','Atlantic/Azores':'PT','Atlantic/Canary':'ES',
+    'Atlantic/Cape_Verde':'CV','Atlantic/Bermuda':'BM',
+    // Asia — East
+    'Asia/Tokyo':'JP','Asia/Seoul':'KR','Asia/Pyongyang':'KP',
+    'Asia/Shanghai':'CN','Asia/Hong_Kong':'HK','Asia/Macau':'MO',
+    'Asia/Taipei':'TW','Asia/Singapore':'SG',
+    // Asia — Southeast
+    'Asia/Bangkok':'TH','Asia/Jakarta':'ID','Asia/Makassar':'ID',
+    'Asia/Jayapura':'ID','Asia/Kuala_Lumpur':'MY','Asia/Kuching':'MY',
+    'Asia/Manila':'PH','Asia/Ho_Chi_Minh':'VN','Asia/Hanoi':'VN',
+    'Asia/Rangoon':'MM','Asia/Yangon':'MM','Asia/Vientiane':'LA',
+    'Asia/Phnom_Penh':'KH','Asia/Dili':'TL',
+    // Asia — South
+    'Asia/Kolkata':'IN','Asia/Calcutta':'IN','Asia/Delhi':'IN','Asia/Mumbai':'IN',
+    'Asia/Karachi':'PK','Asia/Dhaka':'BD','Asia/Colombo':'LK',
+    'Asia/Kathmandu':'NP','Asia/Kabul':'AF',
+    // Asia — Central & Caucasus
+    'Asia/Tbilisi':'GE','Asia/Yerevan':'AM','Asia/Baku':'AZ',
+    'Asia/Tashkent':'UZ','Asia/Almaty':'KZ','Asia/Bishkek':'KG',
+    'Asia/Dushanbe':'TJ','Asia/Ashgabat':'TM',
+    // Asia — Middle East
+    'Asia/Tehran':'IR','Asia/Baghdad':'IQ','Asia/Dubai':'AE',
+    'Asia/Muscat':'OM','Asia/Riyadh':'SA','Asia/Qatar':'QA',
+    'Asia/Bahrain':'BH','Asia/Kuwait':'KW','Asia/Jerusalem':'IL',
+    'Asia/Amman':'JO','Asia/Beirut':'LB','Asia/Damascus':'SY',
+    // Asia — Russia Far East
+    'Asia/Ulaanbaatar':'MN','Asia/Irkutsk':'RU','Asia/Vladivostok':'RU',
+    'Asia/Sakhalin':'RU','Asia/Kamchatka':'RU','Asia/Magadan':'RU',
+    'Asia/Yakutsk':'RU','Asia/Omsk':'RU','Asia/Novosibirsk':'RU',
+    'Asia/Yekaterinburg':'RU',
+    // Africa
+    'Africa/Cairo':'EG','Africa/Nairobi':'KE','Africa/Lagos':'NG',
+    'Africa/Johannesburg':'ZA','Africa/Addis_Ababa':'ET','Africa/Casablanca':'MA',
+    'Africa/Accra':'GH','Africa/Dar_es_Salaam':'TZ','Africa/Khartoum':'SD',
+    'Africa/Tunis':'TN','Africa/Algiers':'DZ','Africa/Tripoli':'LY',
+    'Africa/Abidjan':'CI','Africa/Dakar':'SN','Africa/Harare':'ZW',
+    'Africa/Lusaka':'ZM','Africa/Maputo':'MZ','Africa/Kinshasa':'CD',
+    'Africa/Kampala':'UG','Africa/Mogadishu':'SO','Africa/Brazzaville':'CG',
+    // Australia & Pacific
+    'Australia/Sydney':'AU','Australia/Melbourne':'AU','Australia/Brisbane':'AU',
+    'Australia/Perth':'AU','Australia/Adelaide':'AU','Australia/Darwin':'AU',
+    'Australia/Hobart':'AU',
+    'Pacific/Auckland':'NZ','Pacific/Chatham':'NZ',
+    'Pacific/Fiji':'FJ','Pacific/Guam':'GU','Pacific/Port_Moresby':'PG',
+    'Pacific/Noumea':'NC','Pacific/Tahiti':'PF','Pacific/Apia':'WS',
+    'Pacific/Tongatapu':'TO',
+    // Indian Ocean
+    'Indian/Maldives':'MV','Indian/Mauritius':'MU','Indian/Reunion':'RE'
+  };
+
   // ─── Time helpers ─────────────────────────────────────────────────────────
 
   function nowServerDate() {
@@ -211,6 +307,14 @@
     }
   }
 
+  function flagForTimezone(iana) {
+    var direct = TIMEZONE_COUNTRY[iana];
+    if (direct) return countryFlagEmoji(direct);
+    var cached = state.geoCacheByTimezone[iana];
+    if (cached && cached.cca2) return countryFlagEmoji(cached.cca2);
+    return '';
+  }
+
   // ─── Weather helpers ───────────────────────────────────────────────────────
 
   function weatherIconByCode(code) {
@@ -372,6 +476,7 @@
       label: 'Guatemala',
       city: 'Guatemala City',
       iana: state.gtZone,
+      flag: flagForTimezone(state.gtZone),
       orderKey: '__GT__',
       isBase: true,
       weatherKey: null,
@@ -386,6 +491,7 @@
         label: zone.label,
         city: zone.city,
         iana: zone.iana,
+        flag: flagForTimezone(zone.iana),
         orderKey: zone.iana,
         isBase: false,
         weatherKey: null,
@@ -402,6 +508,7 @@
         label: meta.city,
         city: meta.region,
         iana: customTz,
+        flag: flagForTimezone(customTz),
         orderKey: customTz,
         isBase: false,
         weatherKey: null,
@@ -414,9 +521,10 @@
       var country = state.customCountries[p];
       cards.push({
         id: 'country-' + p,
-        label: country.flag + ' ' + country.name,
+        label: country.name,
         city: country.capital,
         iana: country.iana,
+        flag: country.flag || flagForTimezone(country.iana),
         orderKey: 'country-' + country.cca2,
         isBase: false,
         weatherKey: null,
@@ -478,7 +586,7 @@
       html += '<article class="zone-card" id="card-' + card.id + '" draggable="true" data-order-key="' + card.orderKey + '">';
       html += '<div class="zone-card-header">';
       html += '<div>';
-      html += '<div class="zone-name">' + card.label + '</div>';
+      html += '<div class="zone-name">' + (card.flag ? card.flag + ' ' : '') + card.label + '</div>';
       html += '<div class="zone-city">' + card.city + '</div>';
       html += '</div>';
       html += '<div class="zone-header-actions">';
@@ -787,7 +895,8 @@
       var coords = {
         lat: first.latitude,
         lon: first.longitude,
-        label: first.name
+        label: first.name,
+        cca2: (first.country_code || '').toUpperCase()
       };
       state.geoCacheByTimezone[card.iana] = coords;
       return coords;
